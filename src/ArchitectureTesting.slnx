@@ -12,6 +12,13 @@
 	<Folder Name="/src/">
 		<Project Path="src/ArchitectureTesting/ArchitectureTesting.csproj" />
 	</Folder>
+	<Folder Name="/samples/">
+		<Project Path="samples/ArchitectureSample/src/Domain/Domain.csproj" />
+		<Project Path="samples/ArchitectureSample/src/Application/Application.csproj" />
+		<Project Path="samples/ArchitectureSample/src/Persistence/Persistence.csproj" />
+		<Project Path="samples/ArchitectureSample/src/Composition/Composition.csproj" />
+		<Project Path="samples/ArchitectureSample/tests/Sample.ArchitectureTests/Sample.ArchitectureTests.csproj" />
+	</Folder>
 	<Folder Name="/tests/">
 		<Project Path="tests/ArchitectureTesting.UnitTests/ArchitectureTesting.UnitTests.csproj" />
 		<Project Path="tests/Repository.UnitTests/Repository.UnitTests.csproj" />

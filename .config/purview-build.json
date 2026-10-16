@@ -1,7 +1,7 @@
 {
 	"Build": {
 		"Solution": "src/ArchitectureTesting.slnx",
-		"TestRoot": "src/tests",
+		"TestRoot": "src",
 		"TestPatterns": "*Tests.csproj",
 		"TestFilter": "/*/*/*/*[Category=Unit]/"
 	},

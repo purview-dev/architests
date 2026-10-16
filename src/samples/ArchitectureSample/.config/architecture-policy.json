@@ -1,0 +1,49 @@
+{
+	"$schema": "https://raw.githubusercontent.com/purview-dev/architests/main/architecture-policy.schema.json",
+	"version": 2,
+	"description": "The sample repository's architecture policy: a small layered application.",
+	"conventions": {
+		"qualifiedNameSeparator": ".",
+		"dependencyArrowMeaning": "A ProjectReference: the referencing project compiles against the referenced one."
+	},
+	"sourceRoots": ["src"],
+	"responsibilities": [
+		{
+			"name": "Domain",
+			"category": "domain",
+			"purpose": "The sample's domain model and its invariants.",
+			"mayDependOn": [],
+			"mustNotDependOn": ["Application", "Persistence", "Composition"],
+			"forbiddenFrameworkReferences": ["Microsoft.AspNetCore.App"]
+		},
+		{
+			"name": "Application",
+			"category": "application",
+			"purpose": "Coordinates the sample's use cases and workflows.",
+			"mayDependOn": ["Domain"],
+			"mustNotDependOn": ["Persistence", "Composition"],
+			"forbiddenFrameworkReferences": ["Microsoft.AspNetCore.App"]
+		},
+		{
+			"name": "Persistence",
+			"category": "infrastructure",
+			"purpose": "Durable storage for the sample's orders.",
+			"mayDependOn": ["Domain"],
+			"mustNotDependOn": ["Application", "Composition"]
+		},
+		{
+			"name": "Composition",
+			"category": "composition",
+			"purpose": "The sample's composition root, which selects and wires the implementations.",
+			"mayDependOn": ["Domain", "Application", "Persistence"],
+			"mustNotDependOn": []
+		}
+	],
+	"discouragedProjectNames": {
+		"names": ["Infrastructure", "Services", "Helpers", "Common", "Utilities", "Managers"],
+		"reason": "These name a category rather than a responsibility, so nothing can be kept out of them."
+	},
+	"assemblyRules": {
+		"enabled": true
+	}
+}
