@@ -1,0 +1,26 @@
+{
+	"Build": {
+		"Solution": "src/ArchitectureTesting.slnx",
+		"TestRoot": "src/tests",
+		"TestPatterns": "*Tests.csproj",
+		"TestFilter": "/*/*/*/*[Category=Unit]/"
+	},
+	"PackValidation": {
+		"RequiredCompilerFlags": [
+			"optimization=release"
+		],
+		"RequireSymbolPackage": false,
+		"RequiredContent": {
+			"purview.architecture.testing": [
+				"README.md",
+				"lib/net10.0/Purview.Architecture.Testing.dll",
+				"lib/net10.0/Purview.Architecture.Testing.xml",
+				"content/architecture-policy.schema.json",
+				"purview-logo-light.png"
+			]
+		}
+	},
+	"Release": {
+		"Mode": "None"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "architests",
+	"version": "1.1.0",
+	"license": "MIT",
+	"author": {
+		"name": "Kieron Lanning",
+		"url": "https://kieronlanning.dev/"
+	},
+	"homepage": "https://purview.dev/projects/architests/",
+	"bugs": {
+		"url": "https://github.com/purview-dev/architests/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/purview-dev/architests.git"
+	}
+}

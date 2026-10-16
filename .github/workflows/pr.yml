@@ -1,0 +1,20 @@
+name: PR
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and test
+    uses: purview-dev/build/.github/workflows/purview-build.yml@main
+    with:
+      # Keep in sync with `sdk.version` in global.json.
+      dotnet-version: "11.0.100-rc.2.26504.105"
+      run-pack: true
+      validate-pack: true
+    secrets: inherit

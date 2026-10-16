@@ -1,0 +1,26 @@
+{
+	"$schema": "https://raw.githubusercontent.com/purview-dev/architests/main/architecture-policy.schema.json",
+	"version": 2,
+	"description": "The architecture policy this repository applies to itself, through the package it ships.",
+	"conventions": {
+		"qualifiedNameSeparator": ".",
+		"dependencyArrowMeaning": "A ProjectReference: the referencing project compiles against the referenced one."
+	},
+	"sourceRoots": ["src"],
+	"responsibilities": [
+		{
+			"name": "ArchitectureTesting",
+			"category": "shared",
+			"purpose": "The architecture rule engine: policy reading, the project and assembly graph, and the TUnit rule set.",
+			"mayDependOn": [],
+			"mustNotDependOn": []
+		}
+	],
+	"discouragedProjectNames": {
+		"names": ["Infrastructure", "Services", "Helpers", "Common", "Utilities", "Managers"],
+		"reason": "These name a category rather than a responsibility, so nothing can be kept out of them."
+	},
+	"assemblyRules": {
+		"enabled": true
+	}
+}

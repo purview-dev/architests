@@ -1,0 +1,39 @@
+<Project>
+	<PropertyGroup>
+		<NamespacePrefix>Purview.Architecture</NamespacePrefix>
+		<ExcludePurviewTelemetry>true</ExcludePurviewTelemetry>
+	</PropertyGroup>
+
+	<Import Sdk="Purview.BuildSdk" Project="Sdk.props" />
+
+	<PropertyGroup Label="Purview site URL metadata">
+		<PurviewHomepage>https://purview.dev/</PurviewHomepage>
+		<PurviewProjectUrl>$(PurviewHomepage)projects/architests/</PurviewProjectUrl>
+		<PurviewDocsUrl>$(PurviewHomepage)docs/architests/</PurviewDocsUrl>
+	</PropertyGroup>
+
+	<PropertyGroup Label="NuGet package metadata">
+		<Authors>Kieron Lanning</Authors>
+		<Company>Purview-Dev</Company>
+		<Copyright>Copyright © $(CurrentYear) Purview-Dev</Copyright>
+		<RepositoryUrl>https://github.com/purview-dev/architests.git</RepositoryUrl>
+		<PackageProjectUrl>$(PurviewProjectUrl)</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageIcon>purview-logo-light.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<!--
+			PackageReadmeFile is deliberately not set: the SDK packs a packable project's own README.md
+			(preferred) or the repository-root one when the property is unset. The package's README lives
+			beside its csproj so the package carries the package-specific guidance.
+		-->
+	</PropertyGroup>
+
+	<ItemGroup Label="NuGet package assets" Condition="'$(IsPackable)' == 'true'">
+		<None
+			Include="$(MSBuildThisFileDirectory)../assets/images/purview-logo-light.png"
+			Link="Sdk\purview-logo-light.png"
+		/>
+	</ItemGroup>
+</Project>

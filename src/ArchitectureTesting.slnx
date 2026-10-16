@@ -1,0 +1,19 @@
+<Solution>
+	<Folder Name="/Solution Items/">
+		<File Path="../.editorconfig" />
+		<File Path="../Directory.Packages.props" />
+		<File Path="../global.json" />
+		<File Path="../nuget.config" />
+		<File Path="../package.json" />
+		<File Path="../.config/purview-build.json" />
+		<File Path="Directory.Build.props" />
+		<File Path="Directory.Build.targets" />
+	</Folder>
+	<Folder Name="/src/">
+		<Project Path="src/ArchitectureTesting/ArchitectureTesting.csproj" />
+	</Folder>
+	<Folder Name="/tests/">
+		<Project Path="tests/ArchitectureTesting.UnitTests/ArchitectureTesting.UnitTests.csproj" />
+		<Project Path="tests/Repository.UnitTests/Repository.UnitTests.csproj" />
+	</Folder>
+</Solution>

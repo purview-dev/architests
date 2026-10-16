@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<!--
+			Pinned rather than taking a repository-wide framework set: these tests assert something about
+			the repository itself - its skills folder and its own architecture policy - not about the
+			package's reach, so running them once is the whole job, and Purview.Skills.Testing ships
+			net10.0 only.
+		-->
+		<TargetFramework>net10.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- The Agent Skills conformance rule set, shipped by Purview.BuildSdk. -->
+		<PackageReference Include="Purview.Skills.Testing" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--
+			The repository dogfoods its own package: this project runs the architecture rules it ships
+			against the repository that ships them, so the type-level and framework rules are exercised
+			end to end on every test run.
+		-->
+		<ProjectReference Include="..\..\src\ArchitectureTesting\ArchitectureTesting.csproj" />
+	</ItemGroup>
+</Project>
