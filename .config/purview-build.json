@@ -13,8 +13,8 @@
 		"RequiredContent": {
 			"purview.architecture.testing": [
 				"README.md",
-				"lib/net10.0/Purview.Architecture.Testing.dll",
-				"lib/net10.0/Purview.Architecture.Testing.xml",
+				"lib/$(TFM)/Purview.Architecture.Testing.dll",
+				"lib/$(TFM)/Purview.Architecture.Testing.xml",
 				"content/architecture-policy.schema.json",
 				"purview-logo-light.png"
 			]

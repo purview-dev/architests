@@ -74,6 +74,7 @@ public sealed class ArchitecturePolicy
 			);
 		}
 
+		// The policy file is the single definition of each rule, so deserialising to null is a fatal error.
 		return JsonSerializer.Deserialize<ArchitecturePolicy>(File.ReadAllText(path), SerializerOptions)
 			?? throw new InvalidOperationException($"The architecture policy at '{path}' deserialised to null.");
 	}

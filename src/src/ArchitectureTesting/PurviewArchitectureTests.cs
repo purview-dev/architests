@@ -32,8 +32,6 @@ namespace Purview.Architecture.Testing;
 )]
 public abstract class PurviewArchitectureTests
 {
-	ArchitecturePolicyEvaluator? _evaluator;
-
 	/// <summary>The repository root. Defaults to probing upward for the policy file.</summary>
 	protected virtual string? RepositoryRoot => null;
 
@@ -47,7 +45,7 @@ public abstract class PurviewArchitectureTests
 
 	/// <summary>The evaluator, created once per test class instance.</summary>
 	protected ArchitecturePolicyEvaluator Evaluator =>
-		_evaluator ??= ArchitecturePolicyEvaluator.ForRepository(RepositoryRoot, AdditionalRules);
+		field ??= ArchitecturePolicyEvaluator.ForRepository(RepositoryRoot, AdditionalRules);
 
 	/// <summary>Reports whether a rule should be skipped for this repository.</summary>
 	/// <param name="rule">The rule identifier, from <see cref="ArchitectureRules"/>.</param>

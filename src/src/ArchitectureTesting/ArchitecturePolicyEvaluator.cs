@@ -10,9 +10,6 @@ namespace Purview.Architecture.Testing;
 /// </remarks>
 public sealed class ArchitecturePolicyEvaluator
 {
-	readonly ArchitecturePolicy _policy;
-	readonly IReadOnlyDictionary<string, ProjectNode> _projects;
-	readonly IReadOnlyDictionary<string, AssemblyNode> _assemblies;
 	readonly IReadOnlyList<IArchitectureRule> _additionalRules;
 
 	/// <summary>Creates an evaluator over an explicit policy and project graph.</summary>
@@ -37,9 +34,9 @@ public sealed class ArchitecturePolicyEvaluator
 		ArgumentNullException.ThrowIfNull(projects);
 		ArgumentNullException.ThrowIfNull(assemblies);
 
-		_policy = policy;
-		_projects = projects;
-		_assemblies = assemblies;
+		Policy = policy;
+		Projects = projects;
+		Assemblies = assemblies;
 		_additionalRules = additionalRules ?? [];
 	}
 
@@ -66,16 +63,16 @@ public sealed class ArchitecturePolicyEvaluator
 	}
 
 	/// <summary>The policy being applied.</summary>
-	public ArchitecturePolicy Policy => _policy;
+	public ArchitecturePolicy Policy { get; }
 
 	/// <summary>The project graph.</summary>
-	public IReadOnlyDictionary<string, ProjectNode> Projects => _projects;
+	public IReadOnlyDictionary<string, ProjectNode> Projects { get; }
 
 	/// <summary>The compiled assemblies, keyed by project name.</summary>
-	public IReadOnlyDictionary<string, AssemblyNode> Assemblies => _assemblies;
+	public IReadOnlyDictionary<string, AssemblyNode> Assemblies { get; }
 
 	/// <summary>The production projects, excluding test projects.</summary>
-	public IEnumerable<ProjectNode> ProductionProjects => _projects.Values.Where(project => !project.IsTestProject);
+	public IEnumerable<ProjectNode> ProductionProjects => Projects.Values.Where(project => !project.IsTestProject);
 
 	/// <summary>Runs every rule.</summary>
 	/// <returns>Every violation found, in rule order.</returns>
@@ -113,7 +110,7 @@ public sealed class ArchitecturePolicyEvaluator
 					ArchitectureRules.GraphDiscovery,
 					"(repository)",
 					"No production projects were discovered, so every other rule would pass without checking anything. "
-						+ $"Looked under: {(_policy.SourceRoots.Count == 0 ? "(repository root)" : string.Join(", ", _policy.SourceRoots))}. "
+						+ $"Looked under: {(Policy.SourceRoots.Count == 0 ? "(repository root)" : string.Join(", ", Policy.SourceRoots))}. "
 						+ "Set 'sourceRoots' in the policy to the folders holding the projects; an empty array scans the repository root."
 				),
 			];
@@ -123,13 +120,13 @@ public sealed class ArchitecturePolicyEvaluator
 	public IReadOnlyList<ArchitectureViolation> Naming() =>
 		Excuse(
 			ProductionProjects
-				.Where(project => _policy.Classify(project.Name) is null)
+				.Where(project => Policy.Classify(project.Name) is null)
 				.Select(project => new ArchitectureViolation(
 					ArchitectureRules.Naming,
 					project.Name,
 					$"'{project.Name}' does not map to a known responsibility or alias. "
 						+ "Rename it to '<Responsibility>[.<Implementation>]', or record a waiver in the policy. "
-						+ $"Known responsibilities: {string.Join(", ", _policy.Responsibilities.Select(responsibility => responsibility.Name))}."
+						+ $"Known responsibilities: {string.Join(", ", Policy.Responsibilities.Select(responsibility => responsibility.Name))}."
 				))
 		);
 
@@ -139,7 +136,7 @@ public sealed class ArchitecturePolicyEvaluator
 		Excuse(
 			ProductionProjects
 				.Where(project =>
-					_policy.DiscouragedProjectNames.Names.Contains(
+					Policy.DiscouragedProjectNames.Names.Contains(
 						project.Name.Split('.')[0],
 						StringComparer.OrdinalIgnoreCase
 					)
@@ -147,7 +144,7 @@ public sealed class ArchitecturePolicyEvaluator
 				.Select(project => new ArchitectureViolation(
 					ArchitectureRules.DiscouragedName,
 					project.Name,
-					$"'{project.Name}': {_policy.DiscouragedProjectNames.Reason}"
+					$"'{project.Name}': {Policy.DiscouragedProjectNames.Reason}"
 				))
 		);
 
@@ -159,13 +156,13 @@ public sealed class ArchitecturePolicyEvaluator
 
 		foreach (var project in ProductionProjects)
 		{
-			var responsibility = _policy.Classify(project.Name);
+			var responsibility = Policy.Classify(project.Name);
 			if (responsibility is null)
 				continue;
 
 			foreach (var reference in project.ProjectReferences)
 			{
-				var referenced = _policy.Classify(reference);
+				var referenced = Policy.Classify(reference);
 				if (referenced is null)
 					continue;
 
@@ -216,12 +213,12 @@ public sealed class ArchitecturePolicyEvaluator
 	/// </remarks>
 	public IReadOnlyList<ArchitectureViolation> AssemblyDependencyMatrix()
 	{
-		if (!_policy.AssemblyRules.Enabled)
+		if (!Policy.AssemblyRules.Enabled)
 			return [];
 
-		var sources = _assemblies
+		var sources = Assemblies
 			.Values.Where(assembly =>
-				_projects.TryGetValue(assembly.ProjectName, out var project) && !project.IsTestProject
+				Projects.TryGetValue(assembly.ProjectName, out var project) && !project.IsTestProject
 			)
 			.ToArray();
 
@@ -243,7 +240,7 @@ public sealed class ArchitecturePolicyEvaluator
 
 		foreach (var assembly in sources)
 		{
-			var responsibility = _policy.Classify(assembly.ProjectName);
+			var responsibility = Policy.Classify(assembly.ProjectName);
 			if (responsibility is null)
 				continue;
 
@@ -253,7 +250,7 @@ public sealed class ArchitecturePolicyEvaluator
 
 			foreach (var target in targets)
 			{
-				var referenced = _policy.Classify(target.Key);
+				var referenced = Policy.Classify(target.Key);
 				if (referenced is null)
 					continue;
 
@@ -304,7 +301,7 @@ public sealed class ArchitecturePolicyEvaluator
 
 		foreach (var project in ProductionProjects)
 		{
-			var responsibility = _policy.Classify(project.Name);
+			var responsibility = Policy.Classify(project.Name);
 			if (responsibility?.SiblingIndependence != true || !project.Name.Contains('.', StringComparison.Ordinal))
 				continue;
 
@@ -315,7 +312,7 @@ public sealed class ArchitecturePolicyEvaluator
 					reference.Contains('.', StringComparison.Ordinal)
 					&& !string.Equals(reference, project.Name, StringComparison.OrdinalIgnoreCase)
 					&& string.Equals(
-						_policy.Classify(reference)?.Name,
+						Policy.Classify(reference)?.Name,
 						responsibility.Name,
 						StringComparison.OrdinalIgnoreCase
 					);
@@ -368,7 +365,7 @@ public sealed class ArchitecturePolicyEvaluator
 
 		foreach (var project in ProductionProjects)
 		{
-			var responsibility = _policy.Classify(project.Name);
+			var responsibility = Policy.Classify(project.Name);
 			if (responsibility is null)
 				continue;
 
@@ -404,7 +401,7 @@ public sealed class ArchitecturePolicyEvaluator
 
 		foreach (var project in ProductionProjects)
 		{
-			var responsibility = _policy.Classify(project.Name);
+			var responsibility = Policy.Classify(project.Name);
 			if (responsibility is null)
 				continue;
 
@@ -437,7 +434,7 @@ public sealed class ArchitecturePolicyEvaluator
 	public IReadOnlyList<ArchitectureViolation> Cycles() =>
 		Excuse(
 			ProjectGraph
-				.FindCycles(_projects)
+				.FindCycles(Projects)
 				.Select(cycle => new ArchitectureViolation(
 					ArchitectureRules.Cycle,
 					cycle.Split(" -> ")[0],
@@ -452,7 +449,7 @@ public sealed class ArchitecturePolicyEvaluator
 			ProductionProjects.SelectMany(project =>
 				project
 					.ProjectReferences.Where(reference =>
-						_projects.TryGetValue(reference, out var target) && target.IsTestProject
+						Projects.TryGetValue(reference, out var target) && target.IsTestProject
 					)
 					.Select(reference => new ArchitectureViolation(
 						ArchitectureRules.TestReference,
@@ -477,9 +474,9 @@ public sealed class ArchitecturePolicyEvaluator
 			.All.Concat(_additionalRules.Select(rule => rule.Rule))
 			.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-		foreach (var waiver in _policy.Waivers)
+		foreach (var waiver in Policy.Waivers)
 		{
-			if (!_projects.ContainsKey(waiver.Project))
+			if (!Projects.ContainsKey(waiver.Project))
 			{
 				violations.Add(
 					new ArchitectureViolation(
@@ -513,7 +510,7 @@ public sealed class ArchitecturePolicyEvaluator
 				);
 			}
 
-			if (waiver.MapsTo.Length > 0 && _policy.Classify(waiver.Project) is null)
+			if (waiver.MapsTo.Length > 0 && Policy.Classify(waiver.Project) is null)
 			{
 				violations.Add(
 					new ArchitectureViolation(
@@ -533,7 +530,7 @@ public sealed class ArchitecturePolicyEvaluator
 	public IReadOnlyList<ArchitectureViolation> EvaluateAdditionalRules() =>
 		[
 			.. _additionalRules.SelectMany(rule =>
-				Excuse(rule.Evaluate(new ArchitectureContext(_policy, _projects, _assemblies)))
+				Excuse(rule.Evaluate(new ArchitectureContext(Policy, Projects, Assemblies)))
 			),
 		];
 
@@ -545,7 +542,7 @@ public sealed class ArchitecturePolicyEvaluator
 			.. _additionalRules
 				.Where(candidate => string.Equals(candidate.Rule, rule, StringComparison.OrdinalIgnoreCase))
 				.SelectMany(candidate =>
-					Excuse(candidate.Evaluate(new ArchitectureContext(_policy, _projects, _assemblies)))
+					Excuse(candidate.Evaluate(new ArchitectureContext(Policy, Projects, Assemblies)))
 				),
 		];
 
@@ -569,12 +566,12 @@ public sealed class ArchitecturePolicyEvaluator
 	/// <param name="violations">The violations to filter.</param>
 	/// <returns>The violations that are not excused.</returns>
 	IReadOnlyList<ArchitectureViolation> Excuse(IEnumerable<ArchitectureViolation> violations) =>
-		[.. violations.Where(violation => _policy.WaiverFor(violation.Project)?.Excuses(violation.Rule) != true)];
+		[.. violations.Where(violation => Policy.WaiverFor(violation.Project)?.Excuses(violation.Rule) != true)];
 
 	/// <summary>Reports whether a project belongs to a category.</summary>
 	/// <param name="projectName">The project name.</param>
 	/// <param name="category">The category to test.</param>
 	/// <returns><see langword="true"/> when the project's responsibility has that category.</returns>
 	bool IsCategory(string projectName, string category) =>
-		string.Equals(_policy.Classify(projectName)?.Category, category, StringComparison.OrdinalIgnoreCase);
+		string.Equals(Policy.Classify(projectName)?.Category, category, StringComparison.OrdinalIgnoreCase);
 }
