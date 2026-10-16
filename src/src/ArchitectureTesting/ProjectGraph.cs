@@ -167,8 +167,8 @@ public static class ProjectGraph
 	{
 		ArgumentNullException.ThrowIfNull(projects);
 
-		List<string> cycles = new();
-		Dictionary<string, int> state = new();
+		List<string> cycles = [];
+		Dictionary<string, int> state = [];
 
 		foreach (var project in projects.Keys)
 			Visit(project, []);

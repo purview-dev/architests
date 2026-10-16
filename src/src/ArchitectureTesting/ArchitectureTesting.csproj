@@ -2,8 +2,8 @@
 	<PropertyGroup>
 		<PackageId>Purview.Architecture.Testing</PackageId>
 		<Title>Purview Architecture Testing</Title>
-		<Description>Evaluates a repository's project and assembly graph against a declared architecture policy: dependency direction at both project and type level, sibling independence, composition boundaries, forbidden packages and framework references, cycles and project naming. Ships the policy JSON Schema and a TUnit base class, so a consuming repository adds a policy file and one derived test class.</Description>
-		<PackageTags>architecture;architecture-tests;dependency-rules;tunit;purview;dotnet</PackageTags>
+		<Description>Enforces a repository's architecture policy as TUnit tests: project and type-level dependency direction, sibling independence, composition boundaries, forbidden packages and framework references, cycles and naming. Ships the policy JSON Schema and a TUnit base class, so a consuming repository adds a policy file and one derived test class.</Description>
+		<PackageTags>architecture;architecture-tests;dependency-rules;dependency-matrix;type-level-dependencies;tunit;policy;purview;dotnet;testing</PackageTags>
 		<IsPackable>true</IsPackable>
 
 		<!--

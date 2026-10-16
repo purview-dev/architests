@@ -129,6 +129,15 @@ public sealed class ArchitectureTests : PurviewArchitectureTests
 Each additional rule becomes its own `[Test]` and participates in the same failure reporting,
 `SkipRule` and waiver model.
 
+## Sample and documentation
+
+- A fully working sample repository:
+  [`src/samples/ArchitectureSample`](https://github.com/purview-dev/architests/tree/main/src/samples/ArchitectureSample).
+- Guides: [getting started](https://github.com/purview-dev/architests/blob/main/docs/Getting-Started.md),
+  [policy reference](https://github.com/purview-dev/architests/blob/main/docs/Policy-Reference.md),
+  [type-level rules](https://github.com/purview-dev/architests/blob/main/docs/Type-Level-Rules.md),
+  [extending](https://github.com/purview-dev/architests/blob/main/docs/Extending.md).
+
 ## Design
 
 Three layers, deliberately separated: `ArchitecturePolicy`/`ProjectGraph`/`AssemblyGraph` read the

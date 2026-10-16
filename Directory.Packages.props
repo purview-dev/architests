@@ -5,7 +5,7 @@
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 		<TUnitVersion>1.75.0</TUnitVersion>
-		<JsonSchemaVersion>9.4.0</JsonSchemaVersion>
+		<JsonSchemaVersion>9.4.1</JsonSchemaVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- SourceLink is auto-added by the SDK to IsPackable projects. -->
@@ -21,6 +21,6 @@
 		<PackageVersion Include="TUnit.Mocks" Version="$(TUnitVersion)" />
 		<PackageVersion Include="Bogus" Version="35.6.5" />
 		<!-- The Agent Skills conformance rule set, shipped by Purview.BuildSdk. -->
-		<PackageVersion Include="Purview.Skills.Testing" Version="1.0.6" />
+		<PackageVersion Include="Purview.Skills.Testing" Version="1.0.7" />
 	</ItemGroup>
 </Project>

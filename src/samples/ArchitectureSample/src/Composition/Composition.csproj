@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+		<ProjectReference Include="..\Application\Application.csproj" />
+		<ProjectReference Include="..\Persistence\Persistence.csproj" />
+	</ItemGroup>
+</Project>

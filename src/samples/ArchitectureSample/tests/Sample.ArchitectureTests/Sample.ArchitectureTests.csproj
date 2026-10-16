@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!--
+			The sample references the package by project: it is the repository's own package, so the
+			sample exercises the source rather than a published version. A real consumer would
+			`dotnet add package Purview.Architecture.Testing`.
+		-->
+		<ProjectReference Include="..\..\..\..\src\ArchitectureTesting\ArchitectureTesting.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--
+			The production projects are referenced so their compiled assemblies land in this project's
+			output, which is where the type-level rule reads them from.
+		-->
+		<ProjectReference Include="..\..\src\Domain\Domain.csproj" />
+		<ProjectReference Include="..\..\src\Application\Application.csproj" />
+		<ProjectReference Include="..\..\src\Persistence\Persistence.csproj" />
+		<ProjectReference Include="..\..\src\Composition\Composition.csproj" />
+	</ItemGroup>
+</Project>

@@ -1,6 +1,6 @@
 ---
 name: purview-architests
-description: Adopt or debug Purview.Architecture.Testing, the package that enforces a repository's project and assembly dependency policy as TUnit tests. Use when adding architecture tests to a repository, writing or changing .config/architecture-policy.json, recording a waiver, interpreting a dependency-matrix, type-level, cycle, sibling-independence, framework-reference or naming failure, adding a bespoke rule, or when the architecture tests pass but enforce nothing.
+description: Adopt or debug Purview.Architecture.Testing, the package that enforces a repository's project and type-level dependency policy as TUnit tests. Use when adding architecture tests to a repository, writing or changing .config/architecture-policy.json, enabling the assembly rule, recording a waiver, interpreting a dependency-matrix, type-level, cycle, sibling-independence, composition-boundary, forbidden-package, framework-reference or naming failure, or when the architecture tests pass but enforce nothing.
 license: MIT
 metadata:
   product: Purview.Architecture.Testing
@@ -164,6 +164,8 @@ public sealed class ArchitectureTests : PurviewArchitectureTests
 Each additional rule becomes its own `[Test]` (`AdditionalRule_GivenTheRepository_RespectsThePolicy`),
 so a failure names the rule. It participates in the same failure reporting, `SkipRule` (by its
 `Rule` id) and waiver model — a waiver whose `rules` names it is honoured automatically.
+
+The `purview-architests-extending` skill covers the full extension point and the package's internals.
 
 ## Reading a failure
 

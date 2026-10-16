@@ -22,9 +22,11 @@ derived test class. The repository also applies that package to itself.
 | `src/src/ArchitectureTesting` | The package: `ArchitecturePolicy`, `ProjectGraph`, `AssemblyGraph`, `ArchitecturePolicyEvaluator`, `PurviewArchitectureTests` |
 | `src/tests/ArchitectureTesting.UnitTests` | Rule tests against in-memory and fixture graphs, and the reader tests |
 | `src/tests/Repository.UnitTests` | Repository-level assertions: the skill self-tests and the package applied to this repository |
+| `src/samples/ArchitectureSample` | A small, fully working repository that adopts the package |
+| `docs/` | The documentation site (MkDocs): getting started, policy reference, type-level rules, extending |
 | `architecture-policy.schema.json` | The published policy schema, embedded into the package as a resource |
 | `.config/architecture-policy.json` | This repository's own policy, exercised by the dogfood test |
-| `skills/purview-architests` | The agent skill this repository publishes |
+| `skills/` | The agent skills this repository publishes |
 | `Directory.Packages.props` | Centrally managed NuGet versions |
 | `src/Directory.Build.props` / `src/Directory.Build.targets` | Solution-wide SDK, package, analyzer, and build behavior |
 | `global.json` | Required .NET SDK and Microsoft.Testing.Platform selection |
@@ -128,17 +130,25 @@ delivers skills through the skills CLI, which clones the *git* repository and on
 `.agents/skills/` is the CLI's install location for skills from **other** repositories, and is
 gitignored. This repository's own skills are never installed into it.
 
-Install this repository's skill with:
+Install this repository's skills with:
 
 ```bash
 npx skills add purview-dev/architests
 ```
 
-The single authored skill is `skills/purview-architests/`, which covers adopting, debugging and
-extending `Purview.Architecture.Testing`. `src/tests/Repository.UnitTests/SkillTests.cs` validates it
-on every test run through `Purview.Skills.Testing`'s rule set. The `[InheritsTests]` attribute on
-that class is load-bearing — TUnit does not walk base types during discovery, so without it the run
-is green and nothing is checked.
+| Skill | Answers |
+| -- | -- |
+| `skills/purview-architests/` | adopting, configuring and debugging the package: the policy, the rules, waivers, the type-level rule, reading a failure |
+| `skills/purview-architests-extending/` | adding a bespoke rule, the `ArchitectureContext`, and the package's internals |
+
+Both carry the `purview-architests` prefix, because skills install into one flat directory per agent
+shared with every skill a developer has installed from anywhere. `src/tests/Repository.UnitTests/SkillTests.cs`
+validates them on every test run through `Purview.Skills.Testing`'s rule set, and asserts the prefix.
+The `[InheritsTests]` attribute on that class is load-bearing — TUnit does not walk base types during
+discovery, so without it the run is green and nothing is checked.
+
+Keep the docs in step too: `README.md`, the package README, `docs/`, the schema and the skills all
+describe the same behaviour.
 
 ## Completion checklist
 

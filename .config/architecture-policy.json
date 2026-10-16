@@ -6,7 +6,7 @@
 		"qualifiedNameSeparator": ".",
 		"dependencyArrowMeaning": "A ProjectReference: the referencing project compiles against the referenced one."
 	},
-	"sourceRoots": ["src"],
+	"sourceRoots": ["src/src"],
 	"responsibilities": [
 		{
 			"name": "ArchitectureTesting",
