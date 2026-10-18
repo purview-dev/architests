@@ -105,8 +105,10 @@ Each step is a small pull request that keeps the suite green:
 
 1. **Naming.** Add aliases or waivers, then rename projects in a dedicated change.
 2. **Forbidden packages.** Add one prefix to one responsibility, fix, repeat. The rule checks the
-   declared references and the closure restore resolved, so a transitive or centrally injected
-   package is caught too.
+   packages the project owns: what it declares, what a shared props file injected, and what its own
+   package references pull in. Packages inherited from a **permitted** project reference are not the
+   project’s choice and are not reported; use `forbiddenPackageScope: "closure"` when the strict
+   compile-surface guarantee is what you want.
 3. **Dependency direction.** Move one edge from `mayDependOn` to `mustNotDependOn`, or remove it from
    `mayDependOn` so silence becomes a violation.
 4. **Type rules.** Enable `typeRules` for one category with `sealConcreteClasses` and generated-code

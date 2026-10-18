@@ -15,6 +15,7 @@ public sealed class ArchitectureTests : PurviewArchitectureTests;
 ## Guides
 
 - [Getting started](Getting-Started.md) — adopt the package in a repository, step by step.
+- [Tutorial](Tutorial.md) — grow one application and its policy from a two-project matrix to type, API, port and budget rules.
 - [Policy reference](Policy-Reference.md) — every field, every rule id, every default.
 - [Type-level rules](Type-Level-Rules.md) — how the assembly check works and how an assembly is
   attributed to a project.

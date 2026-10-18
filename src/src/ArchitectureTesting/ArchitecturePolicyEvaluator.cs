@@ -406,8 +406,13 @@ public sealed partial class ArchitecturePolicyEvaluator
 				))
 		);
 
-	/// <summary>Packages matching a forbidden prefix for their responsibility.</summary>
+	/// <summary>Packages a responsibility owns that match a forbidden prefix for it.</summary>
 	/// <returns>The violations.</returns>
+	/// <remarks>
+	/// Ownership excludes packages a permitted project reference explains, so a host is not blamed
+	/// for its adapter's technology. Set <c>forbiddenPackageScope</c> to <c>closure</c> for the
+	/// stricter compile-graph reading.
+	/// </remarks>
 	public IReadOnlyList<ArchitectureViolation> ForbiddenPackages()
 	{
 		List<ArchitectureViolation> violations = [];
@@ -418,34 +423,133 @@ public sealed partial class ArchitecturePolicyEvaluator
 			if (responsibility is null)
 				continue;
 
-			// The declared reference is what a reviewer adds; the resolved closure is what restore
-			// actually brought in, including a transitive or centrally injected package.
-			foreach (
-				var package in project
+			var closureScope = string.Equals(
+				responsibility.ForbiddenPackageScope,
+				"closure",
+				StringComparison.OrdinalIgnoreCase
+			);
+
+			var packages = closureScope
+				? project
 					.PackageReferences.Concat(project.ResolvedPackages)
 					.Distinct(StringComparer.OrdinalIgnoreCase)
-			)
-			{
-				var forbidden = responsibility.ForbiddenPackagePrefixes.FirstOrDefault(prefix =>
-					package.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
-				);
+					.ToArray()
+				: OwnedPackages(project);
 
-				if (forbidden is not null)
-				{
-					violations.Add(
-						new ArchitectureViolation(
-							ArchitectureRules.ForbiddenPackage,
-							project.Name,
-							$"'{project.Name}' ({responsibility.Name}) references package '{package}' (declared or resolved by restore, including transitively), which matches the forbidden "
-								+ $"prefix '{forbidden}' for {responsibility.Name}. {responsibility.Purpose} "
-								+ "Move the dependency to the responsibility that owns that technology."
-						)
-					);
-				}
+			foreach (var prefix in responsibility.ForbiddenPackagePrefixes)
+			{
+				if (string.IsNullOrWhiteSpace(prefix))
+					continue;
+
+				// One finding per technology: report the shortest matching package, not every
+				// Microsoft.EntityFrameworkCore.* assembly in the graph.
+				var matches = packages
+					.Where(package => package.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+					.OrderBy(package => package.Length)
+					.ThenBy(package => package, StringComparer.OrdinalIgnoreCase)
+					.ToArray();
+
+				if (matches.Length == 0)
+					continue;
+
+				var package = matches[0];
+				var examples = matches.Skip(1).Take(3).ToArray();
+				var more = matches.Length - 1 - examples.Length;
+				var related =
+					matches.Length == 1
+						? string.Empty
+						: $" (and {matches.Length - 1} related package(s): {string.Join(", ", examples)}"
+							+ (more > 0 ? $", and {more} more)" : ")");
+
+				violations.Add(
+					new ArchitectureViolation(
+						ArchitectureRules.ForbiddenPackage,
+						project.Name,
+						closureScope
+							? $"'{project.Name}' ({responsibility.Name}) resolves package '{package}'{related} in its restore "
+								+ $"closure, which matches the forbidden prefix '{prefix}'. The closure includes packages "
+								+ "inherited from project references."
+							: $"'{project.Name}' ({responsibility.Name}) declares or brings in package '{package}'{related} "
+								+ $"through its own package references, which matches the forbidden prefix '{prefix}'. "
+								+ "No permitted project reference explains it."
+					)
+				);
 			}
 		}
 
 		return Excuse(violations);
+	}
+
+	/// <summary>The packages a project owns, after subtracting its permitted project references.</summary>
+	/// <param name="project">The project.</param>
+	/// <returns>The package identifiers, sorted.</returns>
+	/// <remarks>
+	/// Ownership is the closure of the packages the project declares itself, plus anything in the
+	/// restore graph that no permitted project reference explains. It is computed per target
+	/// framework, because a conditional reference exists in one target and not another, and the
+	/// results are unioned: a package unexplained in any target is owned.
+	/// </remarks>
+	public IReadOnlyList<string> OwnedPackages(ProjectNode project)
+	{
+		ArgumentNullException.ThrowIfNull(project);
+
+		if (project.PackageTargets.Count == 0)
+			return
+			[
+				.. project
+					.PackageReferences.Distinct(StringComparer.OrdinalIgnoreCase)
+					.Order(StringComparer.OrdinalIgnoreCase),
+			];
+
+		HashSet<string> owned = new(project.PackageReferences, StringComparer.OrdinalIgnoreCase);
+
+		var permitted = project
+			.ProjectReferences.Where(reference => IsPermittedReference(project.Name, reference))
+			.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+		foreach (var target in project.PackageTargets)
+		{
+			// An incomplete restore cannot prove what a permitted reference brought in, so only the
+			// packages the project owns outright are counted. False positives are worse than a gap.
+			if (permitted.Any(reference => !target.ThroughReferences.ContainsKey(reference)))
+			{
+				owned.UnionWith(target.Owned);
+				continue;
+			}
+
+			HashSet<string> explained = new(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var reference in permitted)
+				explained.UnionWith(target.ThroughReferences[reference]);
+
+			owned.UnionWith(target.Owned);
+			owned.UnionWith(target.Resolved.Where(package => !explained.Contains(package)));
+		}
+
+		return [.. owned.Order(StringComparer.OrdinalIgnoreCase)];
+	}
+
+	/// <summary>Reports whether the matrix permits one project to reference another.</summary>
+	/// <param name="sourceName">The referencing project.</param>
+	/// <param name="referenceName">The referenced project.</param>
+	/// <returns><see langword="true"/> when the reference is permitted.</returns>
+	bool IsPermittedReference(string sourceName, string referenceName)
+	{
+		var source = Policy.Classify(sourceName);
+		var target = Policy.Classify(referenceName);
+
+		if (source is null || target is null)
+			return false;
+
+		if (string.Equals(source.Name, target.Name, StringComparison.OrdinalIgnoreCase))
+			return true;
+
+		if (source.MustNotDependOn.Contains(target.Name, StringComparer.OrdinalIgnoreCase))
+			return false;
+
+		// Silence is not permission: the target must be on the source's allowlist, not
+		// merely absent from its prohibitions.
+		return source.MayDependOn.Contains(target.Name, StringComparer.OrdinalIgnoreCase);
 	}
 
 	/// <summary>Framework references matching a forbidden prefix for their responsibility.</summary>

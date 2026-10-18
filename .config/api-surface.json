@@ -1899,6 +1899,15 @@
             },
             {
               "kind": "Method",
+              "name": "OwnedPackages",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ProjectNode"
+              ]
+            },
+            {
+              "kind": "Method",
               "name": "PolicyIntegrity",
               "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
               "isStatic": false,
@@ -2806,6 +2815,118 @@
           ]
         },
         {
+          "name": "Purview.Architecture.Testing.PackageTarget",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.PackageTarget>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<System.String>",
+                "System.Collections.Generic.IReadOnlyList<System.String>",
+                "System.Collections.Generic.IReadOnlyList<System.String>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, System.Collections.Generic.IReadOnlyList<System.String>>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.PackageTarget",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.Collections.Generic.IReadOnlyList<System.String>&",
+                "System.Collections.Generic.IReadOnlyList<System.String>&",
+                "System.Collections.Generic.IReadOnlyList<System.String>&",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, System.Collections.Generic.IReadOnlyList<System.String>>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.PackageTarget"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Direct",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Framework",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Owned",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Resolved",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ThroughReferences",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.Collections.Generic.IReadOnlyList<System.String>>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
           "name": "Purview.Architecture.Testing.PolicyIntegritySettings",
           "kind": "Class",
           "isAbstract": false,
@@ -3076,6 +3197,13 @@
             },
             {
               "kind": "Property",
+              "name": "AssemblyName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
               "name": "FrameworkReferences",
               "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
               "isStatic": false,
@@ -3099,6 +3227,13 @@
               "kind": "Property",
               "name": "PackageReferences",
               "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "PackageTargets",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.PackageTarget>",
               "isStatic": false,
               "parameters": []
             },
@@ -3360,6 +3495,13 @@
               "kind": "Property",
               "name": "ForbiddenPackagePrefixes",
               "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ForbiddenPackageScope",
+              "typeName": "System.String",
               "isStatic": false,
               "parameters": []
             },

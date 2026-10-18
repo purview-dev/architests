@@ -64,7 +64,7 @@ public sealed class ArchitectureTests : PurviewArchitectureTests;
 | `dependencyBudget` | A project references beyond its budget, or the budget still allows a reference that has gone |
 | `siblingIndependence` | A qualified implementation referencing a qualified sibling |
 | `compositionBoundary` | A non-host project referencing the composition root (`category == "composition"`) |
-| `forbiddenPackage` | A package matching a forbidden prefix for that responsibility |
+| `forbiddenPackage` | A package the responsibility owns matching a forbidden prefix |
 | `forbiddenFramework` | A `<FrameworkReference>` matching a forbidden prefix, e.g. `Microsoft.AspNetCore.App` in a portable layer |
 | `cycle` | A dependency cycle, reported readably |
 | `testReference` | Production code referencing a test project |
@@ -215,6 +215,7 @@ Each additional rule becomes its own `[Test]` and participates in the same failu
 - A fully working sample repository:
   [`src/samples/ArchitectureSample`](https://github.com/purview-dev/architests/tree/main/src/samples/ArchitectureSample).
 - Guides: [getting started](https://github.com/purview-dev/architests/blob/main/docs/Getting-Started.md),
+  [tutorial](https://github.com/purview-dev/architests/blob/main/docs/Tutorial.md),
   [policy reference](https://github.com/purview-dev/architests/blob/main/docs/Policy-Reference.md),
   [type-level rules](https://github.com/purview-dev/architests/blob/main/docs/Type-Level-Rules.md),
   [extending](https://github.com/purview-dev/architests/blob/main/docs/Extending.md).

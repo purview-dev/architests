@@ -177,6 +177,32 @@ public sealed class PolicyIntegrityTests
 	}
 
 	[Test]
+	public async Task PolicyIntegrity_GivenAnUnknownForbiddenPackageScope_ReportsIt()
+	{
+		// Arrange
+		var evaluator = Evaluator(
+			Policy(
+				new Responsibility
+				{
+					Name = "Core",
+					Category = "shared",
+					Purpose = "A responsibility declared by the policy-integrity fixture.",
+					MayDependOn = [],
+					MustNotDependOn = [],
+					ForbiddenPackageScope = "everything",
+				}
+			)
+		);
+
+		// Act
+		var violations = evaluator.PolicyIntegrity();
+
+		// Assert
+		await Assert.That(violations).HasSingleItem();
+		await Assert.That(violations[0].Message).Contains("not a scope");
+	}
+
+	[Test]
 	public async Task PolicyIntegrity_GivenAConsistentPolicy_ReportsNothing()
 	{
 		// Arrange

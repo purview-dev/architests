@@ -55,6 +55,7 @@ naming choice, never a different set of rules.
 | `mayDependOn` | The complete set of permitted references. Silence is not permission. |
 | `mustNotDependOn` | Prohibitions that matter. Must not overlap `mayDependOn`. |
 | `forbiddenPackagePrefixes` | NuGet prefixes that must never appear, such as `Microsoft.EntityFrameworkCore`. |
+| `forbiddenPackageScope` | `own` (default) reports packages the project declares or its own packages pull in; `closure` also reports packages inherited from project references. |
 | `forbiddenFrameworkReferences` | Framework prefixes, such as `Microsoft.AspNetCore.App` in a portable layer. |
 | `siblingIndependence` | When true, qualified implementations of this responsibility must not reference each other. |
 
@@ -126,6 +127,16 @@ A waiver is a reviewed departure, not a skip:
 A waiver older than the maximum is a `waiverIntegrity` failure. So are an undated waiver while a
 maximum is set, a date that is not `yyyy-MM-dd`, and a date in the future. Expiry is off by default;
 adopt it deliberately, and expect to renew or delete the waivers it surfaces.
+
+### Package scope
+
+`forbiddenPackagePrefixes` measures **ownership** by default: what the project declares, what a
+shared props file injected, and what its own package references pull in. A package inherited through
+a permitted project reference is not owned, so a host is not reported for its adapter’s EF Core.
+
+Use `"forbiddenPackageScope": "closure"` only when the policy means “this technology must not be
+anywhere on the compile graph”. That makes hosts responsible for every package their adapters bring
+in, and usually requires the adapter to mark implementation packages `PrivateAssets="compile"`.
 
 ## Dependency budget
 

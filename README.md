@@ -93,7 +93,7 @@ Exit codes are part of the contract: `0` clean, `1` findings, `2` a malformed co
 | `dependencyBudget` | A project references beyond its budget, or the budget still allows a reference that has gone |
 | `siblingIndependence` | A qualified implementation referencing a qualified sibling |
 | `compositionBoundary` | A non-composition, non-host project referencing the composition root |
-| `forbiddenPackage` | A package matching a forbidden prefix for the responsibility |
+| `forbiddenPackage` | A package the responsibility owns matching a forbidden prefix |
 | `forbiddenFramework` | A framework reference matching a forbidden prefix for the responsibility |
 | `cycle` | A cycle in the project graph |
 | `testReference` | A production project referencing a test project |
@@ -102,6 +102,7 @@ Exit codes are part of the contract: `0` clean, `1` findings, `2` a malformed co
 ## Documentation
 
 - [Getting started](docs/Getting-Started.md) — adopt the package in a repository, step by step.
+- [Tutorial](docs/Tutorial.md) — grow one application and its policy from a two-project matrix to type, API, port and budget rules.
 - [Policy reference](docs/Policy-Reference.md) — every field, every rule id, every default.
 - [Type-level rules](docs/Type-Level-Rules.md) — how the assembly check works and how an assembly
   is attributed to a project.

@@ -332,6 +332,12 @@
           "items": { "type": "string", "minLength": 1 },
           "uniqueItems": true
         },
+        "forbiddenPackageScope": {
+          "type": "string",
+          "enum": ["own", "closure"],
+          "default": "own",
+          "description": "What forbiddenPackagePrefixes measures. 'own' checks the packages the project declares or its own package references bring in, excluding packages explained by a permitted project reference; 'closure' checks the whole restore closure, including packages inherited from referenced projects."
+        },
         "forbiddenFrameworkReferences": {
           "type": "array",
           "description": "Framework reference prefixes that must not appear in this responsibility, such as Microsoft.AspNetCore.App in a portable layer.",

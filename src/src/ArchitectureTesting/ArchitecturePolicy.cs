@@ -200,6 +200,14 @@ public sealed class Responsibility
 	public IReadOnlyList<string> ForbiddenPackagePrefixes { get; init; } = [];
 
 	/// <summary>
+	/// What <c>forbiddenPackage</c> measures: <c>own</c> (default) checks the packages the project
+	/// declares or its own package references bring in, excluding packages explained by a permitted
+	/// project reference; <c>closure</c> checks the whole restore closure.
+	/// </summary>
+	[JsonPropertyName("forbiddenPackageScope")]
+	public string ForbiddenPackageScope { get; init; } = "own";
+
+	/// <summary>
 	/// Framework references that must not appear in this responsibility, such as
 	/// <c>Microsoft.AspNetCore.App</c> in a portable layer.
 	/// </summary>

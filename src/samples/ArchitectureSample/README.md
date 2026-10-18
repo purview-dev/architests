@@ -36,7 +36,7 @@ class compiles, the run is green, and nothing is enforced.
 | -- | -- | -- |
 | Dependency direction | `dependencyMatrix`, `assemblyDependencyMatrix`, `siblingIndependence` | Domain depends on nothing; Application depends on Domain's port; the two Persistence adapters depend only on Domain and not on each other; Composition may depend on all of them |
 | Boundaries | `compositionBoundary`, `testReference` | nothing references Composition; production code never references the test project |
-| Packages and frameworks | `forbiddenPackage`, `forbiddenFramework` | Domain and Application forbid `Microsoft.EntityFrameworkCore` and `Microsoft.AspNetCore.App`; the check also reads restore's resolved closure |
+| Packages and frameworks | `forbiddenPackage`, `forbiddenFramework` | Domain and Application forbid `Microsoft.EntityFrameworkCore` and `Microsoft.AspNetCore.App`; package checks read restore output and blame only the packages a project owns, not those inherited through a permitted project reference |
 | Policy integrity | `policyIntegrity` (with `checkReachability`), `graphDiscovery`, `naming`, `discouragedName`, `cycle`, `waiverIntegrity` | the matrix is internally consistent and no permitted path bypasses a prohibition |
 | Waivers | `naming` via `Legacy.Reporting` | the name is excused with `mapsTo: Reporting`; every dependency rule still applies to the project |
 | Type rules | `typeNaming`, `typeShape`, `typeNamespace`, `attributePolicy` | interfaces are `I`-prefixed, classes are sealed, collections are read-only, every type sits under its project's `RootNamespace`, and no `[Obsolete]` lacks a message |

@@ -302,6 +302,11 @@ assertion. The `.Because(...)` text lists every violation the rule found.
   waiver with `mapsTo`.
 - `dependencyMatrix` / `assemblyDependencyMatrix` — fix the reference, or move the type. Widening
   `mayDependOn` is the last resort, and it is a policy change that needs review.
+- `forbiddenPackage` — by default the package is one the project **owns**: declared, injected by
+  `Directory.Build.props`, or pulled in by its own package references. A package inherited from a
+  permitted project reference is not reported, so a host is not blamed for its adapter’s EF Core.
+  Set `forbiddenPackageScope: "closure"` on the responsibility only when the strict compile-graph
+  guarantee is intended.
 - `forbiddenFramework` — a `<FrameworkReference>` on a project that should not have it. Move it to
   the responsibility that owns that technology.
 - `graphDiscovery` — almost always a wrong `sourceRoots`. An empty array scans the repository root,

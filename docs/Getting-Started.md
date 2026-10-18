@@ -154,6 +154,9 @@ Adopting in a repository that already has tangled dependencies? Start with
 [Migration and the dependency budget](Migration.md): describe today's graph, then tighten one rule at
 a time. The contract rules are covered in [API contracts](Contracts.md).
 
+For a worked example that starts with two projects and grows the same application through adapters,
+siblings, composition, type rules, contracts and a budget, follow the [tutorial](Tutorial.md).
+
 ## Overrides
 
 ```csharp

@@ -240,7 +240,7 @@ public static class ArchitectureRules
 		new(
 			ForbiddenPackage,
 			"Forbidden packages",
-			"A package matches a forbidden prefix for the responsibility.",
+			"A package the responsibility owns matches a forbidden prefix for it.",
 			"project graph",
 			Waivable: true,
 			DocumentationAnchor: "forbidden-packages"

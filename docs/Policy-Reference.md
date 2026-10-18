@@ -49,6 +49,7 @@ that set `rules` must delete the block; a version-1 policy that did not still va
 | `mayDependOn` | string[] | ✅ | Responsibilities this one may reference. An empty array means it depends on nothing. |
 | `mustNotDependOn` | string[] | ✅ | Responsibilities this one must never reference. |
 | `forbiddenPackagePrefixes` | string[] | | NuGet identifier prefixes that must not appear, e.g. `Microsoft.EntityFrameworkCore`. |
+| `forbiddenPackageScope` | string | `"own"` | `"own"` checks only the packages the project owns; `"closure"` also checks packages inherited from project references. |
 | `forbiddenFrameworkReferences` | string[] | | Framework reference prefixes that must not appear, e.g. `Microsoft.AspNetCore.App`. |
 | `siblingIndependence` | boolean | | When true, qualified implementations of this responsibility must not reference one another. |
 | `separateProjectWhen` | string ≥ 10 | | Documentation only. |
@@ -64,11 +65,52 @@ that set `rules` must delete the block; a version-1 policy that did not still va
 
 ### Package resolution
 
-`forbiddenPackage` checks two sets: the `PackageReference` elements declared in the project file, and
-the **resolved closure** recorded by restore in `obj/project.assets.json`. The second catches a
-package injected by a shared `Directory.Build.props` and one that only arrives transitively, neither
-of which appears in the `.csproj`. The closure is present after `dotnet restore`; before it, the rule
-falls back to the declared references.
+`forbiddenPackage` asks a narrower question than “is this package anywhere in the restore graph?”:
+**does this project own it?**
+
+A host that references a persistence adapter inherits the adapter’s EF Core packages in its restore
+closure. That is how NuGet works, but the host did not choose EF Core — it chose the adapter, which
+the dependency matrix permits. Reporting the host for EF Core would make
+`mayDependOn: ["Persistence"]` self-contradictory.
+
+Ownership is computed per target framework from `obj/project.assets.json`:
+
+```text
+direct    = packages the project declares, including one injected by Directory.Build.props
+owned     = the closure of direct, plus any resolved package no permitted reference explains
+explained = packages reachable through ProjectReferences the matrix permits
+```
+
+- A package the project declares directly stays owned even when a referenced project also brings it.
+- A package pulled in by one of the project’s own package references is owned.
+- A package that only arrives through a **permitted** project reference is not owned, so a host is
+  not reported for its adapter’s technology.
+- A package that arrives through a **disallowed** reference is not excused (the matrix already
+  reports the reference).
+- The rule reports one finding per forbidden prefix, naming the shortest matching package and up to
+  three related packages — not one finding per `Microsoft.EntityFrameworkCore.*` assembly.
+- An incomplete restore (no assets file, or a permitted reference missing from it) falls back to the
+  packages the project owns outright, so a partial restore cannot create false positives.
+- Before any restore, only the declared `PackageReference` elements are checked.
+
+Set `forbiddenPackageScope` on the responsibility to `"closure"` when the policy really does mean
+“this technology must not be anywhere on the compile graph, even inherited”:
+
+```json
+{
+  "name": "Api",
+  "category": "host",
+  "purpose": "The HTTP host that composes the application.",
+  "forbiddenPackagePrefixes": ["Microsoft.EntityFrameworkCore"],
+  "forbiddenPackageScope": "closure"
+}
+```
+
+Under `closure`, the host in the example above is reported. Use it deliberately: it usually means
+the adapter’s package references need `PrivateAssets="compile"`, or the host must not reference the
+adapter at all.
+
+The default is `"own"`.
 
 ## Type rules
 
@@ -319,7 +361,7 @@ id is a `waiverIntegrity` failure, so a typo cannot silently excuse nothing.
 | `dependencyBudget` | A project references beyond its budget, or the budget still allows a hook that has gone. Not waivable. |
 | `siblingIndependence` | A qualified implementation referencing a qualified sibling. |
 | `compositionBoundary` | A non-composition, non-host project referencing a project whose category is `composition`. |
-| `forbiddenPackage` | A package matching a forbidden prefix for the responsibility. |
+| `forbiddenPackage` | A package the responsibility owns matching a forbidden prefix. |
 | `forbiddenFramework` | A `<FrameworkReference>` matching a forbidden prefix for the responsibility. |
 | `cycle` | A cycle in the project dependency graph, reported readably. |
 | `testReference` | A production project referencing a test project. |

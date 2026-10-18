@@ -115,6 +115,19 @@ public sealed partial class ArchitecturePolicyEvaluator
 			);
 		}
 
+		if (
+			!string.Equals(responsibility.ForbiddenPackageScope, "own", StringComparison.OrdinalIgnoreCase)
+			&& !string.Equals(responsibility.ForbiddenPackageScope, "closure", StringComparison.OrdinalIgnoreCase)
+		)
+		{
+			violations.Add(
+				PolicyViolation(
+					$"'{responsibility.Name}' declares forbiddenPackageScope '{responsibility.ForbiddenPackageScope}', "
+						+ "which is not a scope. Use 'own' or 'closure'."
+				)
+			);
+		}
+
 		return violations;
 	}
 
