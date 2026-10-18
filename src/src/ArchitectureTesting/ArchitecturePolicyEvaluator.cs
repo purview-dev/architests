@@ -8,9 +8,10 @@ namespace Purview.Architecture.Testing;
 /// directly, and coupling them to a test base class would make them reachable only through one.
 /// <see cref="PurviewArchitectureTests"/> is a thin wrapper over this.
 /// </remarks>
-public sealed class ArchitecturePolicyEvaluator
+public sealed partial class ArchitecturePolicyEvaluator
 {
 	readonly IReadOnlyList<IArchitectureRule> _additionalRules;
+	readonly DateOnly _today;
 
 	/// <summary>Creates an evaluator over an explicit policy and project graph.</summary>
 	/// <param name="policy">The policy to apply.</param>
@@ -23,11 +24,19 @@ public sealed class ArchitecturePolicyEvaluator
 	/// <param name="projects">The projects to evaluate, keyed by name.</param>
 	/// <param name="assemblies">The compiled assemblies to evaluate, keyed by project name.</param>
 	/// <param name="additionalRules">Rules a repository adds to the standard set.</param>
+	/// <param name="today">
+	/// The date waiver expiry is measured from. Defaults to today in UTC, so a test can pin the clock.
+	/// </param>
+	/// <param name="apiSurfaces">The declared types of each compiled assembly, keyed by project name.</param>
+	/// <param name="apiBaseline">The committed API baseline, when one was found.</param>
 	public ArchitecturePolicyEvaluator(
 		ArchitecturePolicy policy,
 		IReadOnlyDictionary<string, ProjectNode> projects,
 		IReadOnlyDictionary<string, AssemblyNode> assemblies,
-		IReadOnlyList<IArchitectureRule>? additionalRules = null
+		IReadOnlyList<IArchitectureRule>? additionalRules = null,
+		DateOnly? today = null,
+		IReadOnlyDictionary<string, APIAssembly>? apiSurfaces = null,
+		APIBaseline? apiBaseline = null
 	)
 	{
 		ArgumentNullException.ThrowIfNull(policy);
@@ -37,16 +46,21 @@ public sealed class ArchitecturePolicyEvaluator
 		Policy = policy;
 		Projects = projects;
 		Assemblies = assemblies;
+		APISurfaces = apiSurfaces ?? new Dictionary<string, APIAssembly>();
+		Baseline = apiBaseline;
 		_additionalRules = additionalRules ?? [];
+		_today = today ?? DateOnly.FromDateTime(DateTime.UtcNow);
 	}
 
 	/// <summary>Creates an evaluator for a repository on disk.</summary>
 	/// <param name="repositoryRoot">The repository root, or <see langword="null"/> to probe upward for one.</param>
 	/// <param name="additionalRules">Rules a repository adds to the standard set.</param>
+	/// <param name="today">The date waiver expiry is measured from, or <see langword="null"/> for today.</param>
 	/// <returns>The evaluator.</returns>
 	public static ArchitecturePolicyEvaluator ForRepository(
 		string? repositoryRoot = null,
-		IReadOnlyList<IArchitectureRule>? additionalRules = null
+		IReadOnlyList<IArchitectureRule>? additionalRules = null,
+		DateOnly? today = null
 	)
 	{
 		var root = repositoryRoot ?? ArchitecturePolicy.RepositoryRoot();
@@ -55,11 +69,30 @@ public sealed class ArchitecturePolicyEvaluator
 
 		var projects = ProjectGraph.Load(root, policy.SourceRoots);
 
-		var assemblies = policy.AssemblyRules.Enabled
-			? AssemblyGraph.Load(AssemblyGraph.Discover(root, policy.AssemblyRules), projects)
+		// Every reader scans the same assemblies, so the glob is walked once.
+		var needsAssemblies = policy.AssemblyRules.Enabled;
+		var needsSurfaces = policy.TypeRules.Enabled || policy.APIRules.Enabled || policy.PortRules.Enabled;
+		var assemblyPaths = needsAssemblies || needsSurfaces ? AssemblyGraph.Discover(root, policy.AssemblyRules) : [];
+
+		var assemblies = needsAssemblies
+			? AssemblyGraph.Load(assemblyPaths, projects)
 			: new Dictionary<string, AssemblyNode>();
 
-		return new ArchitecturePolicyEvaluator(policy, projects, assemblies, additionalRules);
+		var apiSurfaces = needsSurfaces
+			? APISurface.Load(assemblyPaths, projects)
+			: new Dictionary<string, APIAssembly>();
+
+		var apiBaseline = policy.APIRules.Enabled ? ReadBaseline(root, policy) : null;
+
+		return new ArchitecturePolicyEvaluator(
+			policy,
+			projects,
+			assemblies,
+			additionalRules,
+			today,
+			apiSurfaces,
+			apiBaseline
+		);
 	}
 
 	/// <summary>The policy being applied.</summary>
@@ -71,6 +104,12 @@ public sealed class ArchitecturePolicyEvaluator
 	/// <summary>The compiled assemblies, keyed by project name.</summary>
 	public IReadOnlyDictionary<string, AssemblyNode> Assemblies { get; }
 
+	/// <summary>The declared types of each compiled assembly, keyed by project name.</summary>
+	public IReadOnlyDictionary<string, APIAssembly> APISurfaces { get; }
+
+	/// <summary>The committed API baseline, or <see langword="null"/> when it is absent or unreadable.</summary>
+	public APIBaseline? Baseline { get; }
+
 	/// <summary>The production projects, excluding test projects.</summary>
 	public IEnumerable<ProjectNode> ProductionProjects => Projects.Values.Where(project => !project.IsTestProject);
 
@@ -78,17 +117,27 @@ public sealed class ArchitecturePolicyEvaluator
 	/// <returns>Every violation found, in rule order.</returns>
 	public IReadOnlyList<ArchitectureViolation> EvaluateAll() =>
 		[
+			.. PolicyIntegrity(),
 			.. GraphDiscovery(),
 			.. Naming(),
 			.. DiscouragedNames(),
 			.. DependencyMatrix(),
 			.. AssemblyDependencyMatrix(),
+			.. TypeNaming(),
+			.. TypeShape(),
+			.. TypeNamespace(),
+			.. AttributePolicy(),
+			.. APISurfaceCompatibility(),
+			.. APIDocumentation(),
+			.. PortImplementation(),
+			.. PortPurity(),
 			.. SiblingIndependence(),
 			.. CompositionBoundary(),
 			.. ForbiddenPackages(),
 			.. ForbiddenFrameworkReferences(),
 			.. Cycles(),
 			.. TestReferences(),
+			.. DependencyBudgetRule(),
 			.. WaiverIntegrity(),
 			.. EvaluateAdditionalRules(),
 		];
@@ -369,7 +418,13 @@ public sealed class ArchitecturePolicyEvaluator
 			if (responsibility is null)
 				continue;
 
-			foreach (var package in project.PackageReferences)
+			// The declared reference is what a reviewer adds; the resolved closure is what restore
+			// actually brought in, including a transitive or centrally injected package.
+			foreach (
+				var package in project
+					.PackageReferences.Concat(project.ResolvedPackages)
+					.Distinct(StringComparer.OrdinalIgnoreCase)
+			)
 			{
 				var forbidden = responsibility.ForbiddenPackagePrefixes.FirstOrDefault(prefix =>
 					package.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
@@ -381,7 +436,7 @@ public sealed class ArchitecturePolicyEvaluator
 						new ArchitectureViolation(
 							ArchitectureRules.ForbiddenPackage,
 							project.Name,
-							$"'{project.Name}' ({responsibility.Name}) references package '{package}', which matches the forbidden "
+							$"'{project.Name}' ({responsibility.Name}) references package '{package}' (declared or resolved by restore, including transitively), which matches the forbidden "
 								+ $"prefix '{forbidden}' for {responsibility.Name}. {responsibility.Purpose} "
 								+ "Move the dependency to the responsibility that owns that technology."
 						)
@@ -510,6 +565,22 @@ public sealed class ArchitecturePolicyEvaluator
 				);
 			}
 
+			foreach (
+				var unwaivable in waiver.Rules.Where(rule =>
+					knownRules.Contains(rule) && !ArchitectureRules.IsWaivable(rule)
+				)
+			)
+			{
+				violations.Add(
+					new ArchitectureViolation(
+						ArchitectureRules.WaiverIntegrity,
+						waiver.Project,
+						$"The waiver for '{waiver.Project}' excuses '{unwaivable}', which cannot be waived: it guards the policy itself. "
+							+ "Remove it from the waiver."
+					)
+				);
+			}
+
 			if (waiver.MapsTo.Length > 0 && Policy.Classify(waiver.Project) is null)
 			{
 				violations.Add(
@@ -522,6 +593,18 @@ public sealed class ArchitecturePolicyEvaluator
 			}
 		}
 
+		// A waiver nobody revisits is how a policy quietly stops being true.
+		foreach (var review in WaiverReviewer.Review(Policy, _today).Where(review => review.IsStale))
+		{
+			violations.Add(
+				new ArchitectureViolation(
+					ArchitectureRules.WaiverIntegrity,
+					review.Waiver.Project,
+					$"The waiver for '{review.Waiver.Project}' {review.Reason}"
+				)
+			);
+		}
+
 		return violations;
 	}
 
@@ -530,7 +613,7 @@ public sealed class ArchitecturePolicyEvaluator
 	public IReadOnlyList<ArchitectureViolation> EvaluateAdditionalRules() =>
 		[
 			.. _additionalRules.SelectMany(rule =>
-				Excuse(rule.Evaluate(new ArchitectureContext(Policy, Projects, Assemblies)))
+				Excuse(rule.Evaluate(new ArchitectureContext(Policy, Projects, Assemblies, APISurfaces, Baseline)))
 			),
 		];
 
@@ -542,7 +625,9 @@ public sealed class ArchitecturePolicyEvaluator
 			.. _additionalRules
 				.Where(candidate => string.Equals(candidate.Rule, rule, StringComparison.OrdinalIgnoreCase))
 				.SelectMany(candidate =>
-					Excuse(candidate.Evaluate(new ArchitectureContext(Policy, Projects, Assemblies)))
+					Excuse(
+						candidate.Evaluate(new ArchitectureContext(Policy, Projects, Assemblies, APISurfaces, Baseline))
+					)
 				),
 		];
 
@@ -562,11 +647,16 @@ public sealed class ArchitecturePolicyEvaluator
 				);
 	}
 
-	/// <summary>Drops violations a waiver excuses, so any rule id can be waived per project.</summary>
+	/// <summary>Drops violations a waiver excuses, so any waivable rule can be waived per project.</summary>
 	/// <param name="violations">The violations to filter.</param>
 	/// <returns>The violations that are not excused.</returns>
 	IReadOnlyList<ArchitectureViolation> Excuse(IEnumerable<ArchitectureViolation> violations) =>
-		[.. violations.Where(violation => Policy.WaiverFor(violation.Project)?.Excuses(violation.Rule) != true)];
+		[
+			.. violations.Where(violation =>
+				!ArchitectureRules.IsWaivable(violation.Rule)
+				|| Policy.WaiverFor(violation.Project)?.Excuses(violation.Rule) != true
+			),
+		];
 
 	/// <summary>Reports whether a project belongs to a category.</summary>
 	/// <param name="projectName">The project name.</param>

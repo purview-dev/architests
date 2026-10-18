@@ -14,7 +14,7 @@
     "version": {
       "type": "integer",
       "minimum": 1,
-      "description": "Schema version of this document. Increment when a change would break a reader that understood the previous shape. Version 2 removed the 'rules' object, whose flags were never consulted; use SkipRule, or a waiver, to opt out of a rule."
+      "description": "Schema version of this document. Increment when a change would break a reader that understood the previous shape. Version 3 adds typeRules, apiRules, portRules, dependencyBudget, policyIntegrity and waiverPolicy; a version-2 document remains valid because all are optional. Version 2 removed the 'rules' object, whose flags were never consulted; use SkipRule, or a waiver, to opt out of a rule."
     },
     "description": {
       "type": "string"
@@ -85,6 +85,204 @@
           "items": { "type": "string", "minLength": 1 },
           "uniqueItems": true,
           "default": ["*.dll"]
+        }
+      }
+    },
+    "typeRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The type-level naming, shape, namespace and attribute rules. Off by default because they read compiled assemblies and need a build to have produced them.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the type-level rules run. They read the definition tables by metadata only: nothing is loaded or executed."
+        },
+        "appliesTo": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Which responsibilities the rules govern. An empty categories array governs every production responsibility.",
+          "properties": {
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["domain", "application", "infrastructure", "composition", "host", "shared"]
+              },
+              "uniqueItems": true,
+              "default": []
+            }
+          }
+        },
+        "excludeGeneratedCode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Skip types marked GeneratedCode or CompilerGenerated, so a source generator is not forced to change."
+        },
+        "excludeNamespacePrefixes": {
+          "type": "array",
+          "description": "Namespace prefixes whose types are skipped, such as a generated-client namespace.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "discouragedTypeSuffixes": {
+          "type": "array",
+          "description": "Type-name suffixes that describe a mechanism rather than a responsibility.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "default": ["Manager", "Helper", "Util", "Impl"]
+        },
+        "sealConcreteClasses": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require a public concrete class to be sealed, unless it is abstract."
+        },
+        "requireReadOnlyCollections": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reject a public property or method that exposes List<T> or Dictionary<TKey, TValue>; return IReadOnlyList<T> or IReadOnlyDictionary<TKey, TValue> instead."
+        },
+        "forbiddenAttributes": {
+          "type": "array",
+          "description": "Attributes no governed public type may carry, by namespace-qualified type name.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "requiredAttributes": {
+          "type": "array",
+          "description": "Attributes every governed public type must carry, by namespace-qualified type name.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "allowObsoleteWithoutMessage": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow [Obsolete] without a message. Off by default: an obsolete member without a replacement is a dead end."
+        },
+        "forbidInternalsVisibleToProduction": {
+          "type": "boolean",
+          "default": true,
+          "description": "Report InternalsVisibleTo that names a production assembly. Exposing internals to a test project remains ordinary."
+        }
+      }
+    },
+    "apiRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The committed-API rules. The baseline is the reviewed record of the public surface, so an addition is as deliberate as a removal. Off by default because it needs a build.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the API rules run."
+        },
+        "baseline": {
+          "type": "string",
+          "minLength": 1,
+          "default": ".config/api-surface.json",
+          "description": "The baseline path relative to the repository root."
+        },
+        "requireTypeDocumentation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require every public type to have an XML documentation entry. The project must generate its documentation file."
+        },
+        "requireMemberDocumentation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Require every public member to have an XML documentation entry. Off by default: a record's positional parameters document its properties through the type entry."
+        }
+      }
+    },
+    "portRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The port rules: every interface in a port category has an implementation, and its signature names no infrastructure technology.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the port rules run."
+        },
+        "categories": {
+          "type": "array",
+          "description": "The categories whose interfaces are treated as ports. Defaults to the inner layers.",
+          "items": {
+            "type": "string",
+            "enum": ["domain", "application", "infrastructure", "composition", "host", "shared"]
+          },
+          "uniqueItems": true,
+          "default": ["domain", "application"]
+        },
+        "forbiddenTypePrefixes": {
+          "type": "array",
+          "description": "Type prefixes a port must not expose, such as a database provider or an HTTP client.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "default": ["Microsoft.EntityFrameworkCore", "System.Data", "Microsoft.AspNetCore", "System.Net.Http"]
+        }
+      }
+    },
+    "dependencyBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A ratchet on each project's declared references. The budget records what the graph allows today, so a new dependency needs a reviewed change and a stale allowance is removed.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the budget is enforced."
+        },
+        "failOnStale": {
+          "type": "boolean",
+          "default": true,
+          "description": "Fail when an allowed reference no longer exists. A stale allowance hides the next dependency."
+        },
+        "entries": {
+          "type": "array",
+          "description": "The per-project allowances. A project with no entry is not budgeted; an empty array is a valid starting point.",
+          "items": {
+            "type": "object",
+            "required": ["project", "references"],
+            "additionalProperties": false,
+            "properties": {
+              "project": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The production project name, exactly as it appears on disk."
+              },
+              "references": {
+                "type": "array",
+                "description": "The project references the budget permits.",
+                "items": { "type": "string", "minLength": 1 },
+                "uniqueItems": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "policyIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The policy's own consistency checks. Unknown responsibility names, a dependency that is both permitted and forbidden, and duplicate names or aliases are always reported; reachability is opt-in.",
+      "properties": {
+        "checkReachability": {
+          "type": "boolean",
+          "default": false,
+          "description": "Prove each mustNotDependOn is enforceable: a prohibition is meaningless when the permitted mayDependOn closure can reach the forbidden responsibility anyway."
+        }
+      }
+    },
+    "waiverPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "How long a waiver may go unreviewed. Unset by default, so expiry is opt-in; a policy that adopts it turns reviewedOn from a note into an obligation.",
+      "properties": {
+        "maxAgeDays": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The maximum age, in days, of a waiver's reviewedOn date. A stale waiver is reported by waiverIntegrity and by 'architests waivers list --stale'."
         }
       }
     },

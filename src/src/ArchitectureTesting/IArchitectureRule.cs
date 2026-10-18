@@ -3,11 +3,18 @@ namespace Purview.Architecture.Testing;
 /// <summary>Everything a rule is evaluated against.</summary>
 /// <param name="Policy">The policy being applied.</param>
 /// <param name="Projects">The project graph, keyed by project name.</param>
-/// <param name="Assemblies">The compiled assemblies, keyed by project name. Empty when type-level rules are off.</param>
+/// <param name="Assemblies">The compiled assemblies, keyed by project name.</param>
+/// <param name="APISurfaces">
+/// The declared types of each compiled assembly, keyed by project name. Empty when the type-level,
+/// API and port rules are off.
+/// </param>
+/// <param name="Baseline">The committed API baseline, or <see langword="null"/> when absent.</param>
 public sealed record ArchitectureContext(
 	ArchitecturePolicy Policy,
 	IReadOnlyDictionary<string, ProjectNode> Projects,
-	IReadOnlyDictionary<string, AssemblyNode> Assemblies
+	IReadOnlyDictionary<string, AssemblyNode> Assemblies,
+	IReadOnlyDictionary<string, APIAssembly> APISurfaces,
+	APIBaseline? Baseline
 );
 
 /// <summary>

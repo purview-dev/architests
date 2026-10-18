@@ -19,7 +19,9 @@
 		-->
 		<ProjectReference Include="..\..\src\Domain\Domain.csproj" />
 		<ProjectReference Include="..\..\src\Application\Application.csproj" />
-		<ProjectReference Include="..\..\src\Persistence\Persistence.csproj" />
+		<ProjectReference Include="..\..\src\Persistence.InMemory\Persistence.InMemory.csproj" />
+		<ProjectReference Include="..\..\src\Persistence.Json\Persistence.Json.csproj" />
 		<ProjectReference Include="..\..\src\Composition\Composition.csproj" />
+		<ProjectReference Include="..\..\src\Legacy.Reporting\Legacy.Reporting.csproj" />
 	</ItemGroup>
 </Project>

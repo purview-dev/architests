@@ -44,15 +44,19 @@ public abstract class PurviewArchitectureTests
 	protected virtual IReadOnlyList<IArchitectureRule> AdditionalRules => [];
 
 	/// <summary>The evaluator, created once per test class instance.</summary>
-	protected ArchitecturePolicyEvaluator Evaluator =>
-		field ??= ArchitecturePolicyEvaluator.ForRepository(RepositoryRoot, AdditionalRules);
+	protected ArchitecturePolicyEvaluator Evaluator
+	{
+		get => field ??= ArchitecturePolicyEvaluator.ForRepository(RepositoryRoot, AdditionalRules);
+		private set;
+	}
 
 	/// <summary>Reports whether a rule should be skipped for this repository.</summary>
 	/// <param name="rule">The rule identifier, from <see cref="ArchitectureRules"/>.</param>
 	/// <returns><see langword="true"/> to skip the rule.</returns>
 	/// <remarks>
 	/// Prefer a waiver in the policy: it is per project rather than per repository, carries a reason,
-	/// and is itself checked. Skipping a rule wholesale removes it with no record.
+	/// and is itself checked. Skipping a rule wholesale removes it with no record. A rule that cannot
+	/// be waived cannot be skipped either, so the policy guards always run.
 	/// </remarks>
 	protected virtual bool SkipRule(string rule) => false;
 
@@ -71,6 +75,10 @@ public abstract class PurviewArchitectureTests
 				Environment.NewLine + string.Join(Environment.NewLine, failures.Select(failure => $"  {failure}"))
 			);
 	}
+
+	[Test]
+	public Task Policy_GivenItsOwnDefinitions_IsConsistent() =>
+		AssertRule(ArchitectureRules.PolicyIntegrity, Evaluator.PolicyIntegrity());
 
 	[Test]
 	public Task Repository_GivenItsSourceRoots_YieldsProjectsToCheck() =>
@@ -92,6 +100,42 @@ public abstract class PurviewArchitectureTests
 	[Test]
 	public Task AssemblyTypes_GivenTheirReferences_RespectTheDependencyMatrix() =>
 		AssertRule(ArchitectureRules.AssemblyDependencyMatrix, Evaluator.AssemblyDependencyMatrix());
+
+	/// <summary>Runs each enabled type-level rule as its own test.</summary>
+	/// <param name="rule">The type-level rule identifier.</param>
+	/// <returns>The assertion.</returns>
+	[Test]
+	[MethodDataSource(nameof(EnabledTypeRuleIds), SkipIfEmpty = true)]
+	public Task TypeRules_GivenTheRepository_RespectThePolicy(string rule) =>
+		AssertRule(rule, Evaluator.EvaluateTypeRule(rule));
+
+	/// <summary>The type-level rule identifiers enabled by the policy, so each becomes its own test case.</summary>
+	/// <returns>The rule identifiers.</returns>
+	public IEnumerable<string> EnabledTypeRuleIds() => Evaluator.EnabledTypeRules();
+
+	/// <summary>Runs each enabled API rule as its own test.</summary>
+	/// <param name="rule">The API rule identifier.</param>
+	/// <returns>The assertion.</returns>
+	[Test]
+	[MethodDataSource(nameof(EnabledAPIRuleIds), SkipIfEmpty = true)]
+	public Task APIRules_GivenTheRepository_RespectThePolicy(string rule) =>
+		AssertRule(rule, Evaluator.EvaluateAPIRule(rule));
+
+	/// <summary>The API rule identifiers enabled by the policy.</summary>
+	/// <returns>The rule identifiers.</returns>
+	public IEnumerable<string> EnabledAPIRuleIds() => Evaluator.EnabledAPIRules();
+
+	/// <summary>Runs each enabled port rule as its own test.</summary>
+	/// <param name="rule">The port rule identifier.</param>
+	/// <returns>The assertion.</returns>
+	[Test]
+	[MethodDataSource(nameof(EnabledPortRuleIds), SkipIfEmpty = true)]
+	public Task PortRules_GivenTheRepository_RespectThePolicy(string rule) =>
+		AssertRule(rule, Evaluator.EvaluatePortRule(rule));
+
+	/// <summary>The port rule identifiers enabled by the policy.</summary>
+	/// <returns>The rule identifiers.</returns>
+	public IEnumerable<string> EnabledPortRuleIds() => Evaluator.EnabledPortRules();
 
 	[Test]
 	public Task SiblingImplementations_GivenTheirReferences_DoNotDependOnEachOther() =>
@@ -117,6 +161,18 @@ public abstract class PurviewArchitectureTests
 	public Task ProductionProjects_GivenTheirReferences_DoNotReferenceATestProject() =>
 		AssertRule(ArchitectureRules.TestReference, Evaluator.TestReferences());
 
+	/// <summary>Runs each enabled adoption rule as its own test.</summary>
+	/// <param name="rule">The adoption rule identifier.</param>
+	/// <returns>The assertion.</returns>
+	[Test]
+	[MethodDataSource(nameof(EnabledAdoptionRuleIds), SkipIfEmpty = true)]
+	public Task AdoptionRules_GivenTheRepository_RespectThePolicy(string rule) =>
+		AssertRule(rule, Evaluator.EvaluateAdoptionRule(rule));
+
+	/// <summary>The adoption rule identifiers enabled by the policy.</summary>
+	/// <returns>The rule identifiers.</returns>
+	public IEnumerable<string> EnabledAdoptionRuleIds() => Evaluator.EnabledAdoptionRules();
+
 	[Test]
 	public Task PolicyWaivers_GivenTheirDefinitions_AreJustifiedAndStillApply() =>
 		AssertRule(ArchitectureRules.WaiverIntegrity, Evaluator.WaiverIntegrity());
@@ -139,7 +195,9 @@ public abstract class PurviewArchitectureTests
 	/// <returns>The assertion.</returns>
 	async Task AssertRule(string rule, IReadOnlyList<ArchitectureViolation> violations)
 	{
-		if (SkipRule(rule))
+		// SkipRule is a blunt, repository-wide waiver. The guards cannot be waived at all, so they
+		// cannot be skipped either - otherwise a broken policy could be silenced with one override.
+		if (SkipRule(rule) && ArchitectureRules.IsWaivable(rule))
 			return;
 
 		await Assert.That(violations).IsEmpty().Because(ArchitecturePolicyEvaluator.Report(violations));

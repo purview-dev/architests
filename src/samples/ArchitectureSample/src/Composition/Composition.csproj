@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
+		<RootNamespace>Purview.Architecture.Composition</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Domain\Domain.csproj" />
 		<ProjectReference Include="..\Application\Application.csproj" />
-		<ProjectReference Include="..\Persistence\Persistence.csproj" />
+		<ProjectReference Include="..\Persistence.InMemory\Persistence.InMemory.csproj" />
+		<ProjectReference Include="..\Persistence.Json\Persistence.Json.csproj" />
 	</ItemGroup>
 </Project>

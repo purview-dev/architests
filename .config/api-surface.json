@@ -1,0 +1,3739 @@
+{
+  "version": 1,
+  "projects": [
+    {
+      "project": "Architecture.CLI",
+      "responsibility": "Architecture",
+      "types": [
+        {
+          "name": "ArchitectureCLIAssembly",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": []
+        },
+        {
+          "name": "Purview.Architecture.CLI.CommandLine",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Field",
+              "name": "Findings",
+              "typeName": "System.Int32",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Success",
+              "typeName": "System.Int32",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "UsageError",
+              "typeName": "System.Int32",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Run",
+              "typeName": "System.Int32",
+              "isStatic": true,
+              "parameters": [
+                "System.Collections.Generic.IReadOnlyList<System.String>",
+                "System.IO.TextWriter",
+                "System.IO.TextWriter"
+              ]
+            },
+            {
+              "kind": "Property",
+              "name": "Version",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "ArchitectureTesting",
+      "responsibility": "ArchitectureTesting",
+      "types": [
+        {
+          "name": "ArchitectureTestingAssembly",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": []
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIAssembly",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIAssembly>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIType>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIAssembly",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIType>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIAssembly"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "AssemblyName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Attributes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Path",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ProjectName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Types",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIType>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIAttribute",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIAttribute>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIAttribute",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIAttribute"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "StringArgument",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "TypeName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIBaseline",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIBaseline>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.Int32",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineProject>"
+              ]
+            },
+            {
+              "kind": "Field",
+              "name": "CurrentVersion",
+              "typeName": "System.Int32",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIBaseline",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Capture",
+              "typeName": "Purview.Architecture.Testing.APIBaseline",
+              "isStatic": true,
+              "parameters": [
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>",
+                "Purview.Architecture.Testing.ArchitecturePolicy"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.Int32&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineProject>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIBaseline"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Read",
+              "typeName": "Purview.Architecture.Testing.APIBaseline",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Sorted",
+              "typeName": "Purview.Architecture.Testing.APIBaseline",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToCanonicalJson",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Write",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Property",
+              "name": "Projects",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineProject>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "RelativePath",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Version",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIBaselineChange",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIBaselineChange>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIBaselineChangeKind",
+                "System.String",
+                "System.String",
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIBaselineChange",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIBaselineChangeKind&",
+                "System.String&",
+                "System.String&",
+                "System.String&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIBaselineChange"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Detail",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Kind",
+              "typeName": "Purview.Architecture.Testing.APIBaselineChangeKind",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Project",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Subject",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIBaselineChangeKind",
+          "kind": "Enum",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Enum",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Field",
+              "name": "Added",
+              "typeName": "Purview.Architecture.Testing.APIBaselineChangeKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Changed",
+              "typeName": "Purview.Architecture.Testing.APIBaselineChangeKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Removed",
+              "typeName": "Purview.Architecture.Testing.APIBaselineChangeKind",
+              "isStatic": true,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIBaselineComparer",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "Compare",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineChange>",
+              "isStatic": true,
+              "parameters": [
+                "Purview.Architecture.Testing.APIBaseline",
+                "Purview.Architecture.Testing.APIBaseline"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIBaselineMember",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIBaselineMember>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.String",
+                "System.Boolean",
+                "System.Collections.Generic.IReadOnlyList<System.String>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIBaselineMember",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.String&",
+                "System.Boolean&",
+                "System.Collections.Generic.IReadOnlyList<System.String>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIBaselineMember"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsStatic",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Kind",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Name",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Parameters",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "TypeName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIBaselineProject",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIBaselineProject>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineType>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIBaselineProject",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineType>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIBaselineProject"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Project",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Responsibility",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Types",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineType>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIBaselineType",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIBaselineType>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.Boolean",
+                "System.Boolean",
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<System.String>",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineMember>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIBaselineType",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.Boolean&",
+                "System.Boolean&",
+                "System.String&",
+                "System.Collections.Generic.IReadOnlyList<System.String>&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineMember>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIBaselineType"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "BaseType",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Interfaces",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsAbstract",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsSealed",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Kind",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Members",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIBaselineMember>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Name",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIMember",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIMember>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "Purview.Architecture.Testing.APIMemberKind",
+                "System.String",
+                "System.Boolean",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIMember",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "Purview.Architecture.Testing.APIMemberKind&",
+                "System.String&",
+                "System.Boolean&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIMember"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Attributes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsStatic",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Kind",
+              "typeName": "Purview.Architecture.Testing.APIMemberKind",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Name",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Parameters",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "TypeName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIMemberKind",
+          "kind": "Enum",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Enum",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Field",
+              "name": "Constructor",
+              "typeName": "Purview.Architecture.Testing.APIMemberKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Event",
+              "typeName": "Purview.Architecture.Testing.APIMemberKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Field",
+              "typeName": "Purview.Architecture.Testing.APIMemberKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Method",
+              "typeName": "Purview.Architecture.Testing.APIMemberKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Property",
+              "typeName": "Purview.Architecture.Testing.APIMemberKind",
+              "isStatic": true,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIRules",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Baseline",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Enabled",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "RequireMemberDocumentation",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "RequireTypeDocumentation",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APISurface",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "Discover",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": true,
+              "parameters": [
+                "System.String",
+                "Purview.Architecture.Testing.AssemblyRules"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Load",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>",
+              "isStatic": true,
+              "parameters": [
+                "System.Collections.Generic.IEnumerable<System.String>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Read",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIType>",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "ReadAssembly",
+              "typeName": "Purview.Architecture.Testing.APIAssembly",
+              "isStatic": true,
+              "parameters": [
+                "System.String",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APIType",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.APIType>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.String",
+                "System.String",
+                "Purview.Architecture.Testing.APITypeKind",
+                "System.Boolean",
+                "System.Boolean",
+                "System.Boolean",
+                "System.Boolean",
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<System.String>",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIMember>",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.APIType",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.String&",
+                "System.String&",
+                "Purview.Architecture.Testing.APITypeKind&",
+                "System.Boolean&",
+                "System.Boolean&",
+                "System.Boolean&",
+                "System.Boolean&",
+                "System.String&",
+                "System.Collections.Generic.IReadOnlyList<System.String>&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIMember>&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.APIType"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Attributes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIAttribute>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "BaseType",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "FullName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Interfaces",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsAbstract",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsAttribute",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsException",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsGeneratedCode",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsNested",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsPublic",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsSealed",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsStatic",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Kind",
+              "typeName": "Purview.Architecture.Testing.APITypeKind",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Members",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIMember>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Name",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Namespace",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ProjectName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.APITypeKind",
+          "kind": "Enum",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Enum",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Field",
+              "name": "Class",
+              "typeName": "Purview.Architecture.Testing.APITypeKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Delegate",
+              "typeName": "Purview.Architecture.Testing.APITypeKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Enum",
+              "typeName": "Purview.Architecture.Testing.APITypeKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Interface",
+              "typeName": "Purview.Architecture.Testing.APITypeKind",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Struct",
+              "typeName": "Purview.Architecture.Testing.APITypeKind",
+              "isStatic": true,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.ArchitectureContext",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.ArchitectureContext>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitecturePolicy",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.AssemblyNode>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>",
+                "Purview.Architecture.Testing.APIBaseline"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.ArchitectureContext",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitecturePolicy&",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>&",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.AssemblyNode>&",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>&",
+                "Purview.Architecture.Testing.APIBaseline&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitectureContext"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "APISurfaces",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Assemblies",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.AssemblyNode>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Baseline",
+              "typeName": "Purview.Architecture.Testing.APIBaseline",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Policy",
+              "typeName": "Purview.Architecture.Testing.ArchitecturePolicy",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Projects",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.ArchitecturePolicy",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Classify",
+              "typeName": "Purview.Architecture.Testing.Responsibility",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Load",
+              "typeName": "Purview.Architecture.Testing.ArchitecturePolicy",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "RepositoryRoot",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "WaiverFor",
+              "typeName": "Purview.Architecture.Testing.PolicyWaiver",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Property",
+              "name": "APIRules",
+              "typeName": "Purview.Architecture.Testing.APIRules",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "AssemblyRules",
+              "typeName": "Purview.Architecture.Testing.AssemblyRules",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "DependencyBudget",
+              "typeName": "Purview.Architecture.Testing.DependencyBudget",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "DiscouragedProjectNames",
+              "typeName": "Purview.Architecture.Testing.DiscouragedNames",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "PolicyIntegrity",
+              "typeName": "Purview.Architecture.Testing.PolicyIntegritySettings",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "PortRules",
+              "typeName": "Purview.Architecture.Testing.PortRules",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "RelativePath",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Responsibilities",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.Responsibility>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "SourceRoots",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "TypeRules",
+              "typeName": "Purview.Architecture.Testing.TypeRules",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Version",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "WaiverPolicy",
+              "typeName": "Purview.Architecture.Testing.WaiverPolicySettings",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Waivers",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.PolicyWaiver>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.ArchitecturePolicyEvaluator",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitecturePolicy",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>"
+              ]
+            },
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitecturePolicy",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.AssemblyNode>",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.IArchitectureRule>",
+                "System.Nullable<System.DateOnly>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>",
+                "Purview.Architecture.Testing.APIBaseline"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "APIDocumentation",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "APISurfaceCompatibility",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "AssemblyDependencyMatrix",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "AttributePolicy",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "CompositionBoundary",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Cycles",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "DependencyBudgetRule",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "DependencyMatrix",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "DiscouragedNames",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EnabledAPIRules",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EnabledAdoptionRules",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EnabledPortRules",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EnabledTypeRules",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EvaluateAPIRule",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "EvaluateAdditionalRule",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "EvaluateAdditionalRules",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EvaluateAdoptionRule",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "EvaluateAll",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EvaluatePortRule",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "EvaluateTypeRule",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "ForRepository",
+              "typeName": "Purview.Architecture.Testing.ArchitecturePolicyEvaluator",
+              "isStatic": true,
+              "parameters": [
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.IArchitectureRule>",
+                "System.Nullable<System.DateOnly>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "ForbiddenFrameworkReferences",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ForbiddenPackages",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "GraphDiscovery",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Naming",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "PolicyIntegrity",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "PortImplementation",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "PortPurity",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Report",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": [
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "SiblingIndependence",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "TestReferences",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "TypeNamespace",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "TypeNaming",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "TypeShape",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "WaiverIntegrity",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "APISurfaces",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Assemblies",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.AssemblyNode>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Baseline",
+              "typeName": "Purview.Architecture.Testing.APIBaseline",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Policy",
+              "typeName": "Purview.Architecture.Testing.ArchitecturePolicy",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ProductionProjects",
+              "typeName": "System.Collections.Generic.IEnumerable<Purview.Architecture.Testing.ProjectNode>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Projects",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.ArchitectureRuleDescriptor",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.ArchitectureRuleDescriptor>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.String",
+                "System.String",
+                "System.Boolean",
+                "System.String",
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.ArchitectureRuleDescriptor",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.String&",
+                "System.String&",
+                "System.Boolean&",
+                "System.String&",
+                "System.String&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitectureRuleDescriptor"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "DataSource",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "DocumentationAnchor",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Group",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Rule",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Summary",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Title",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Waivable",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.ArchitectureRules",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Field",
+              "name": "APIDocumentation",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "APISurface",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "AssemblyDependencyMatrix",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "AttributePolicy",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "CompositionBoundary",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Cycle",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "DependencyBudgetRule",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "DependencyMatrix",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "DiscouragedName",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "ForbiddenFramework",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "ForbiddenPackage",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "GraphDiscovery",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "Naming",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "PolicyIntegrity",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "PortImplementation",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "PortPurity",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "SiblingIndependence",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "TestReference",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "TypeNamespace",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "TypeNaming",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "TypeShape",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Field",
+              "name": "WaiverIntegrity",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Describe",
+              "typeName": "Purview.Architecture.Testing.ArchitectureRuleDescriptor",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "IsWaivable",
+              "typeName": "System.Boolean",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Property",
+              "name": "All",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Catalogue",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureRuleDescriptor>",
+              "isStatic": true,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.ArchitectureViolation",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.ArchitectureViolation>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.ArchitectureViolation",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.String&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitectureViolation"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Message",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Project",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Rule",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.AssemblyGraph",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "Discover",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": true,
+              "parameters": [
+                "System.String",
+                "Purview.Architecture.Testing.AssemblyRules"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Load",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.AssemblyNode>",
+              "isStatic": true,
+              "parameters": [
+                "System.Collections.Generic.IEnumerable<System.String>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.AssemblyNode",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.AssemblyNode>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.AssemblyReference>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.AssemblyNode",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.AssemblyReference>&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.AssemblyNode"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "AssemblyName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ProjectName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "References",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.AssemblyReference>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.AssemblyReference",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.AssemblyReference>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.AssemblyReference",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.AssemblyReference"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "TargetProject",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "TypeName",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.AssemblyRules",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "AssemblyGlobs",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "AssemblyRoots",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Enabled",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.DependencyBudget",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Enabled",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Entries",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.DependencyBudgetEntry>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "FailOnStale",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.DependencyBudgetEntry",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Project",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "References",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.DiscouragedNames",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Names",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Reason",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.IArchitectureRule",
+          "kind": "Interface",
+          "isAbstract": true,
+          "isSealed": false,
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "Evaluate",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitectureContext"
+              ]
+            },
+            {
+              "kind": "Property",
+              "name": "Rule",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.PolicyIntegritySettings",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "CheckReachability",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.PolicySchemaValidator",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Field",
+              "name": "SchemaId",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Validate",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.PolicyWaiver",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Excuses",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Property",
+              "name": "MapsTo",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Project",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Reason",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ReviewedOn",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Rules",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.PortRules",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Categories",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Enabled",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ForbiddenTypePrefixes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.ProjectGraph",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "FindCycles",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": true,
+              "parameters": [
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Load",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Load",
+              "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
+              "isStatic": true,
+              "parameters": [
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<System.String>"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.ProjectNode",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.ProjectNode>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<System.String>",
+                "System.Collections.Generic.IReadOnlyList<System.String>",
+                "System.Boolean"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.ProjectNode",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&",
+                "System.Collections.Generic.IReadOnlyList<System.String>&",
+                "System.Collections.Generic.IReadOnlyList<System.String>&",
+                "System.Boolean&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.ProjectNode"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "AnalyzerReferences",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "FrameworkReferences",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsTestProject",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Name",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "PackageReferences",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Path",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ProjectReferences",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ResolvedPackages",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "RootNamespace",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.PurviewArchitectureTests",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": false,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "APIRules_GivenTheRepository_RespectThePolicy",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "AdditionalRuleIds",
+              "typeName": "System.Collections.Generic.IEnumerable<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "AdditionalRule_GivenTheRepository_RespectsThePolicy",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "AdoptionRules_GivenTheRepository_RespectThePolicy",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "AssemblyTypes_GivenTheirReferences_RespectTheDependencyMatrix",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EnabledAPIRuleIds",
+              "typeName": "System.Collections.Generic.IEnumerable<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EnabledAdoptionRuleIds",
+              "typeName": "System.Collections.Generic.IEnumerable<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EnabledPortRuleIds",
+              "typeName": "System.Collections.Generic.IEnumerable<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "EnabledTypeRuleIds",
+              "typeName": "System.Collections.Generic.IEnumerable<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Implementations_GivenTheirReferences_DoNotDependOnComposition",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "PolicyWaivers_GivenTheirDefinitions_AreJustifiedAndStillApply",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Policy_GivenItsOwnDefinitions_IsConsistent",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Policy_GivenTheSchema_Validates",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "PortRules_GivenTheRepository_RespectThePolicy",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "ProductionProjects_GivenTheirFrameworkReferences_AvoidForbiddenFrameworks",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ProductionProjects_GivenTheirNames_AvoidCatchAllNames",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ProductionProjects_GivenTheirNames_MapToAResponsibility",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ProductionProjects_GivenTheirPackages_AvoidForbiddenFrameworkDependencies",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ProductionProjects_GivenTheirReferences_DoNotReferenceATestProject",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ProductionProjects_GivenTheirReferences_RespectTheDependencyMatrix",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ProjectGraph_GivenItsReferences_HasNoCycles",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Repository_GivenItsSourceRoots_YieldsProjectsToCheck",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "SiblingImplementations_GivenTheirReferences_DoNotDependOnEachOther",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "TypeRules_GivenTheRepository_RespectThePolicy",
+              "typeName": "System.Threading.Tasks.Task",
+              "isStatic": false,
+              "parameters": [
+                "System.String"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.Responsibility",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Aliases",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Category",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ForbiddenFrameworkReferences",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ForbiddenPackagePrefixes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "MayDependOn",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "MayRemainCombinedWhen",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "MustNotDependOn",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Name",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Purpose",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "SeparateProjectWhen",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "SiblingIndependence",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.TypeRuleScope",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Categories",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.TypeRules",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "AllowObsoleteWithoutMessage",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "AppliesTo",
+              "typeName": "Purview.Architecture.Testing.TypeRuleScope",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "DiscouragedTypeSuffixes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Enabled",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ExcludeGeneratedCode",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ExcludeNamespacePrefixes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ForbidInternalsVisibleToProduction",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "ForbiddenAttributes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "RequireReadOnlyCollections",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "RequiredAttributes",
+              "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "SealConcreteClasses",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.WaiverPolicySettings",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "MaxAgeDays",
+              "typeName": "System.Nullable<System.Int32>",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.WaiverReview",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.WaiverReview>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.PolicyWaiver",
+                "System.Boolean",
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.WaiverReview",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.PolicyWaiver&",
+                "System.Boolean&",
+                "System.String&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.WaiverReview"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "IsStale",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Reason",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Waiver",
+              "typeName": "Purview.Architecture.Testing.PolicyWaiver",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.WaiverReviewer",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Field",
+              "name": "DateFormat",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Review",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.WaiverReview>",
+              "isStatic": true,
+              "parameters": [
+                "Purview.Architecture.Testing.ArchitecturePolicy",
+                "System.DateOnly"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.XMLDocumentation",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "Exists",
+              "typeName": "System.Boolean",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "FormatType",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "MemberId",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": [
+                "Purview.Architecture.Testing.APIType",
+                "Purview.Architecture.Testing.APIMember"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Read",
+              "typeName": "System.Collections.Generic.IReadOnlySet<System.String>",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "TypeId",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": [
+                "Purview.Architecture.Testing.APIType"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

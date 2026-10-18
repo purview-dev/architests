@@ -9,6 +9,9 @@ nav:
   - Getting started: Getting-Started.md
   - Policy reference: Policy-Reference.md
   - Type-level rules: Type-Level-Rules.md
+  - API contracts: Contracts.md
+  - Migration and budget: Migration.md
+  - Command line: Cli.md
   - Extending: Extending.md
 
 theme:

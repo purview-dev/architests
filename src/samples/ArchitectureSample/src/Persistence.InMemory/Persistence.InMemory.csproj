@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Purview.Architecture.Persistence.InMemory</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+	</ItemGroup>
+</Project>

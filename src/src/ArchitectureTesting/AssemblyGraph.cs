@@ -213,35 +213,7 @@ public static class AssemblyGraph
 		string assemblyName,
 		MetadataReader reader,
 		IReadOnlyDictionary<string, ProjectNode> projects
-	)
-	{
-		// The SDK writes a global marker class named after the project for every production project,
-		// so an assembly whose name is unrelated to its project (an explicit AssemblyName) still maps.
-		foreach (var handle in reader.TypeDefinitions)
-		{
-			var type = reader.GetTypeDefinition(handle);
-			if (!type.Namespace.IsNil)
-				continue;
-
-			var typeName = reader.GetString(type.Name);
-			if (!typeName.EndsWith("Assembly", StringComparison.Ordinal))
-				continue;
-
-			var marker = typeName[..^"Assembly".Length];
-			var match = projects.Keys.FirstOrDefault(project =>
-				string.Equals(RemoveNonWord(project), marker, StringComparison.OrdinalIgnoreCase)
-			);
-
-			if (match is not null)
-				return match;
-		}
-
-		// A repository that opts the marker out, or a project the SDK did not build, still maps when
-		// its assembly name is its project name.
-		return projects.Keys.FirstOrDefault(project =>
-			string.Equals(project, assemblyName, StringComparison.OrdinalIgnoreCase)
-		);
-	}
+	) => AssemblyAttribution.Resolve(assemblyName, reader, projects);
 
 	/// <summary>Resolves a type reference's resolution scope to the assembly that defines it.</summary>
 	/// <param name="reader">The assembly's metadata.</param>
@@ -270,9 +242,4 @@ public static class AssemblyGraph
 	/// <returns><see langword="true"/> when the path is under an <c>obj</c> folder.</returns>
 	static bool IsIntermediate(string path) =>
 		path.Replace('\\', '/').Contains("/obj/", StringComparison.OrdinalIgnoreCase);
-
-	/// <summary>Strips everything that is not a word character, matching the SDK's marker naming.</summary>
-	/// <param name="value">The value to strip.</param>
-	/// <returns>The stripped value.</returns>
-	static string RemoveNonWord(string value) => new([.. value.Where(char.IsLetterOrDigit)]);
 }

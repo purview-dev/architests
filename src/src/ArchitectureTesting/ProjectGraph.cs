@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Xml.Linq;
 
 namespace Purview.Architecture.Testing;
@@ -21,6 +22,19 @@ public sealed record ProjectNode(
 
 	/// <summary>The analyzer assemblies it references directly.</summary>
 	public IReadOnlyList<string> AnalyzerReferences { get; init; } = [];
+
+	/// <summary>
+	/// The project's declared root namespace. Defaults to the project name, which is the SDK's
+	/// fallback when a project does not override it.
+	/// </summary>
+	public string RootNamespace { get; init; } = string.Empty;
+
+	/// <summary>
+	/// The packages restore resolved for the project, including transitive dependencies and packages
+	/// injected by a shared props file. Read from <c>obj/project.assets.json</c>; empty before a
+	/// restore.
+	/// </summary>
+	public IReadOnlyList<string> ResolvedPackages { get; init; } = [];
 }
 
 /// <summary>
@@ -141,6 +155,8 @@ public static class ProjectGraph
 			.Distinct(StringComparer.OrdinalIgnoreCase)
 			.ToArray();
 
+		var rootNamespace = document.Descendants("RootNamespace").LastOrDefault()?.Value.Trim();
+
 		// The SDK derives IsTestProject from the folder, so the path is the reliable signal here.
 		var isTestProject =
 			name.EndsWith("Tests", StringComparison.OrdinalIgnoreCase)
@@ -153,7 +169,76 @@ public static class ProjectGraph
 		{
 			FrameworkReferences = frameworkReferences,
 			AnalyzerReferences = analyzerReferences,
+			RootNamespace = string.IsNullOrWhiteSpace(rootNamespace) ? name : rootNamespace,
+			ResolvedPackages = ReadResolvedPackages(projectPath),
 		};
+	}
+
+	/// <summary>Reads the packages a restore resolved for a project.</summary>
+	/// <param name="projectPath">The project file path.</param>
+	/// <returns>The package identifiers, or an empty list before a restore.</returns>
+	/// <remarks>
+	/// The project file shows only a direct <c>PackageReference</c>. Restore's assets file records
+	/// the resolved closure, including a package injected by <c>Directory.Build.props</c> and one
+	/// that only arrives transitively. It is restore output rather than MSBuild, so the reader stays
+	/// free of build evaluation.
+	/// </remarks>
+	static List<string> ReadResolvedPackages(string projectPath)
+	{
+		var directory = Path.GetDirectoryName(Path.GetFullPath(projectPath));
+		var assetsPath = Path.Combine(directory ?? ".", "obj", "project.assets.json");
+
+		if (!File.Exists(assetsPath))
+			return [];
+
+		try
+		{
+			using var document = JsonDocument.Parse(File.ReadAllBytes(assetsPath));
+
+			if (
+				!document.RootElement.TryGetProperty("targets", out var targets)
+				|| targets.ValueKind != JsonValueKind.Object
+			)
+			{
+				return [];
+			}
+
+			HashSet<string> packages = new(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var target in targets.EnumerateObject())
+			{
+				if (target.Value.ValueKind != JsonValueKind.Object)
+					continue;
+
+				foreach (var entry in target.Value.EnumerateObject())
+				{
+					// A project reference in the assets file is not a package.
+					if (
+						entry.Value.ValueKind == JsonValueKind.Object
+						&& entry.Value.TryGetProperty("type", out var type)
+						&& type.ValueKind == JsonValueKind.String
+						&& !string.Equals(type.GetString(), "package", StringComparison.OrdinalIgnoreCase)
+					)
+					{
+						continue;
+					}
+
+					var separator = entry.Name.IndexOf('/', StringComparison.Ordinal);
+					packages.Add(separator < 0 ? entry.Name : entry.Name[..separator]);
+				}
+			}
+
+			return [.. packages.Order(StringComparer.OrdinalIgnoreCase)];
+		}
+		catch (JsonException)
+		{
+			// A partially written or older assets file: fall back to the declared references.
+			return [];
+		}
+		catch (IOException)
+		{
+			return [];
+		}
 	}
 
 	/// <summary>Finds every dependency cycle in the project graph.</summary>

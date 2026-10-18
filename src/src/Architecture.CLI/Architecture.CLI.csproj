@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Title>Purview Architecture Testing CLI</Title>
+		<Description>Runs the Purview architecture policy outside TUnit: validates the policy document against its schema and integrity rules, lists the policy's waivers, and compares compiled assemblies with a committed API surface baseline.</Description>
+		<PackageTags>architecture;architecture-tests;dependency-rules;dependency-matrix;policy;purview;dotnet;cli;tool</PackageTags>
+		<PackageId>Purview.Architecture.Testing.Cli</PackageId>
+		<IsPackable>true</IsPackable>
+
+		<!--
+			The project stays Architecture.CLI so project-name classification maps it to the
+			Architecture responsibility, and the SDK recognises the suffix as a CLI app. The assembly
+			and command are architests because that is what a user types. The SDK's generated
+			ArchitectureCLIAssembly marker is what lets the assembly reader attribute architests.dll
+			back to this project.
+		-->
+		<AssemblyName>architests</AssemblyName>
+		<RootNamespace>Purview.Architecture.CLI</RootNamespace>
+		<TargetFramework>net10.0</TargetFramework>
+		<!--
+			A dotnet tool selects one target framework. net10.0 is the floor and major roll-forward
+			lets a machine with only .NET 11 run it, which matches the package's support window.
+		-->
+		<RollForward>Major</RollForward>
+		<OutputType>Exe</OutputType>
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>architests</ToolCommandName>
+		<!--
+			A tool package's content comes from `dotnet publish`, which the SDK skips unless the
+			project is publishable (the repository default is false). Without this, `pack` produces
+			a DotnetTool package containing only DotnetToolSettings.xml and fails NU5017.
+		-->
+		<IsPublishable>true</IsPublishable>
+		<!-- The files here declare their usings explicitly, as the package does. -->
+		<AutoIncludeUsings>false</AutoIncludeUsings>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<!--
+			The package's assembly declares the TUnit base class, so TUnit's analyzers reach this
+			project through the project reference and cannot be subtracted there. The tool is an
+			application, not a test project, so the diagnostic that forbids an entry point
+			(TUnit0034) is a false positive; it is the only TUnit rule suppressed.
+		-->
+		<NoWarn>$(NoWarn);TUnit0034</NoWarn>
+		<!-- The tool has no tests, so TUnit's generator and implicit usings have nothing to do here. -->
+		<EnableTUnitSourceGeneration>false</EnableTUnitSourceGeneration>
+		<TUnitImplicitUsings>false</TUnitImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!--
+			All logic stays in the evaluator and the readers; this project only loads, dispatches,
+			formats and returns an exit code, so the tool cannot drift from the tests.
+		-->
+		<ProjectReference Include="../ArchitectureTesting/ArchitectureTesting.csproj" />
+	</ItemGroup>
+</Project>

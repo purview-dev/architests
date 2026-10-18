@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<NamespacePrefix>Purview.Architecture</NamespacePrefix>
+		<AutoIncludeUsings>false</AutoIncludeUsings>
+		<RootNamespace>Purview.Architecture.Testing.CLI.UnitTests</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- The tool is an application, so the tests drive its command line directly. -->
+		<ProjectReference Include="../../src/Architecture.CLI/Architecture.CLI.csproj" />
+	</ItemGroup>
+</Project>

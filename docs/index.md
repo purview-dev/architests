@@ -18,6 +18,9 @@ public sealed class ArchitectureTests : PurviewArchitectureTests;
 - [Policy reference](Policy-Reference.md) — every field, every rule id, every default.
 - [Type-level rules](Type-Level-Rules.md) — how the assembly check works and how an assembly is
   attributed to a project.
+- [API contracts](Contracts.md) — the committed baseline, XML documentation and the port rules.
+- [Migration and budget](Migration.md) — adopt incrementally, waive narrowly and ratchet the graph.
+- [Command line](Cli.md) — validate, capture the API, review waivers and render the graph.
 - [Extending](Extending.md) — add your own rule to the standard set.
 
 ## Reference

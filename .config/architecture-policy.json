@@ -1,6 +1,6 @@
 {
 	"$schema": "https://raw.githubusercontent.com/purview-dev/architests/main/architecture-policy.schema.json",
-	"version": 2,
+	"version": 3,
 	"description": "The architecture policy this repository applies to itself, through the package it ships.",
 	"conventions": {
 		"qualifiedNameSeparator": ".",
@@ -14,6 +14,13 @@
 			"purpose": "The architecture rule engine: policy reading, the project and assembly graph, and the TUnit rule set.",
 			"mayDependOn": [],
 			"mustNotDependOn": []
+		},
+		{
+			"name": "Architecture",
+			"category": "host",
+			"purpose": "The architests command-line host that runs the evaluator outside TUnit.",
+			"mayDependOn": ["ArchitectureTesting"],
+			"mustNotDependOn": []
 		}
 	],
 	"discouragedProjectNames": {
@@ -22,5 +29,29 @@
 	},
 	"assemblyRules": {
 		"enabled": true
+	},
+	"typeRules": {
+		"enabled": true,
+		"appliesTo": {
+			"categories": ["shared", "host"]
+		},
+		"excludeGeneratedCode": true
+	},
+	"apiRules": {
+		"enabled": true
+	},
+	"portRules": {
+		"enabled": true
+	},
+	"dependencyBudget": {
+		"enabled": true,
+		"failOnStale": true,
+		"entries": []
+	},
+	"policyIntegrity": {
+		"checkReachability": true
+	},
+	"waiverPolicy": {
+		"maxAgeDays": 180
 	}
 }

@@ -10,7 +10,11 @@
 			The policy reader and evaluator are deliberately free of MSBuild and test-framework types,
 			so the rules can be exercised directly. Only PurviewArchitectureTests touches TUnit.
 		-->
-		<TargetFramework>net10.0</TargetFramework>
+		<!--
+			A consumer on .NET 10 or .NET 11 resolves the matching asset. The evaluator uses no
+			runtime-version-specific API, so the same source compiles for both targets.
+		-->
+		<TargetFrameworks>net10.0;net11.0</TargetFrameworks>
 
 		<!--
 			The package name is Purview.Architecture.Testing, not Purview.Architecture.ArchitectureTesting:
