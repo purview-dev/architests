@@ -3,7 +3,7 @@
 		"Solution": "src/ArchitectureTesting.slnx",
 		"TestRoot": "src",
 		"TestPatterns": "*Tests.csproj",
-		"TestFilter": "/*/*/*/*[Category=Unit]/"
+		"TestFilter": "/*/*/*/*/"
 	},
 	"PackValidation": {
 		"RequiredCompilerFlags": [
