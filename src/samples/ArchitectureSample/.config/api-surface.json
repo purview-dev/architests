@@ -1,0 +1,355 @@
+{
+  "version": 1,
+  "projects": [
+    {
+      "project": "Application",
+      "responsibility": "Application",
+      "types": [
+        {
+          "name": "ApplicationAssembly",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": []
+        },
+        {
+          "name": "Purview.Architecture.Application.PlaceOrderHandler",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Domain.IOrderRepository"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Place",
+              "typeName": "Purview.Architecture.Domain.Order",
+              "isStatic": false,
+              "parameters": [
+                "System.Decimal"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "Composition",
+      "responsibility": "Composition",
+      "types": [
+        {
+          "name": "CompositionAssembly",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": []
+        },
+        {
+          "name": "Purview.Architecture.Composition.CompositionRoot",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "PlaceAndSave",
+              "typeName": "Purview.Architecture.Domain.Order",
+              "isStatic": false,
+              "parameters": [
+                "System.Decimal"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "Domain",
+      "responsibility": "Domain",
+      "types": [
+        {
+          "name": "DomainAssembly",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": []
+        },
+        {
+          "name": "Purview.Architecture.Domain.IOrderRepository",
+          "kind": "Interface",
+          "isAbstract": true,
+          "isSealed": false,
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "All",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Domain.Order>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Save",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Domain.Order"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Domain.Order",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Domain.Order>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.Guid",
+                "System.Decimal"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Domain.Order",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.Guid&",
+                "System.Decimal&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Domain.Order"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Id",
+              "typeName": "System.Guid",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Total",
+              "typeName": "System.Decimal",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "Legacy.Reporting",
+      "responsibility": "Reporting",
+      "types": [
+        {
+          "name": "LegacyReportingAssembly",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": []
+        },
+        {
+          "name": "Purview.Architecture.Reporting.OrderReport",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Domain.IOrderRepository"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Summarise",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "Persistence.InMemory",
+      "responsibility": "Persistence",
+      "types": [
+        {
+          "name": "PersistenceInMemoryAssembly",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": []
+        },
+        {
+          "name": "Purview.Architecture.Persistence.InMemory.InMemoryOrderRepository",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "Purview.Architecture.Domain.IOrderRepository"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "All",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Domain.Order>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Save",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Domain.Order"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project": "Persistence.Json",
+      "responsibility": "Persistence",
+      "types": [
+        {
+          "name": "PersistenceJsonAssembly",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": []
+        },
+        {
+          "name": "Purview.Architecture.Persistence.Json.JsonOrderRepository",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "Purview.Architecture.Domain.IOrderRepository"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "All",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Domain.Order>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Save",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Domain.Order"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

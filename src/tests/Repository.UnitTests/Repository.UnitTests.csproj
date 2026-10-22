@@ -22,5 +22,11 @@
 			end to end on every test run.
 		-->
 		<ProjectReference Include="..\..\src\ArchitectureTesting\ArchitectureTesting.csproj" />
+		<!--
+			The dogfood test project references every production project, so the type-level reader
+			sees architests.dll in its output directory alongside the package assembly. Without
+			this, the tool's own types would silently escape every metadata rule.
+		-->
+		<ProjectReference Include="..\..\src\Architecture.CLI\Architecture.CLI.csproj" />
 	</ItemGroup>
 </Project>

@@ -394,7 +394,7 @@ public sealed class ArchitecturePolicyEvaluatorTests
 	{
 		// Arrange
 		var evaluator = Evaluator(
-			Policy(Core, Application, Persistence, Composition),
+			Policy(Core, Application, Persistence, Composition, Shared),
 			Project("Core"),
 			Project("Application", ["Core"]),
 			Project("Persistence", ["Core", "Application"]),
@@ -415,7 +415,7 @@ public sealed class ArchitecturePolicyEvaluatorTests
 		// A test project references everything by design; applying the matrix to it would make the
 		// rule set unusable.
 		var evaluator = Evaluator(
-			Policy(Core, Persistence),
+			Policy(Core, Application, Persistence, Composition, Shared),
 			Project("Core.UnitTests", ["Core", "Persistence"], isTest: true),
 			Project("Core"),
 			Project("Persistence")

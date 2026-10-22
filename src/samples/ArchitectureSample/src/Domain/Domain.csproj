@@ -2,5 +2,11 @@
 	<PropertyGroup>
 		<!-- A sample, not a shippable package. -->
 		<IsPackable>false</IsPackable>
+		<!--
+			The namespace rule compares a type's namespace with this root. The SDK derives the
+			Purview.Architecture prefix from Directory.Build.props, so the sample declares the full
+			root explicitly, exactly as a consumer whose namespace differs from its project name must.
+		-->
+		<RootNamespace>Purview.Architecture.Domain</RootNamespace>
 	</PropertyGroup>
 </Project>

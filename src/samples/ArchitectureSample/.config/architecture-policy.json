@@ -1,7 +1,7 @@
 {
 	"$schema": "https://raw.githubusercontent.com/purview-dev/architests/main/architecture-policy.schema.json",
-	"version": 2,
-	"description": "The sample repository's architecture policy: a small layered application.",
+	"version": 3,
+	"description": "The sample repository's architecture policy: a small layered application that exercises every rule group.",
 	"conventions": {
 		"qualifiedNameSeparator": ".",
 		"dependencyArrowMeaning": "A ProjectReference: the referencing project compiles against the referenced one."
@@ -11,32 +11,42 @@
 		{
 			"name": "Domain",
 			"category": "domain",
-			"purpose": "The sample's domain model and its invariants.",
+			"purpose": "The sample's domain model, its invariants and the storage port it owns.",
 			"mayDependOn": [],
-			"mustNotDependOn": ["Application", "Persistence", "Composition"],
+			"mustNotDependOn": ["Application", "Persistence", "Composition", "Reporting"],
+			"forbiddenPackagePrefixes": ["Microsoft.EntityFrameworkCore"],
 			"forbiddenFrameworkReferences": ["Microsoft.AspNetCore.App"]
 		},
 		{
 			"name": "Application",
 			"category": "application",
-			"purpose": "Coordinates the sample's use cases and workflows.",
+			"purpose": "Coordinates the sample's use cases over the domain's ports.",
 			"mayDependOn": ["Domain"],
 			"mustNotDependOn": ["Persistence", "Composition"],
+			"forbiddenPackagePrefixes": ["Microsoft.EntityFrameworkCore"],
 			"forbiddenFrameworkReferences": ["Microsoft.AspNetCore.App"]
 		},
 		{
 			"name": "Persistence",
 			"category": "infrastructure",
-			"purpose": "Durable storage for the sample's orders.",
+			"purpose": "Adapters that implement the domain's storage port.",
 			"mayDependOn": ["Domain"],
-			"mustNotDependOn": ["Application", "Composition"]
+			"mustNotDependOn": ["Application", "Composition"],
+			"siblingIndependence": true
 		},
 		{
 			"name": "Composition",
 			"category": "composition",
-			"purpose": "The sample's composition root, which selects and wires the implementations.",
+			"purpose": "The sample's composition root, which selects an adapter and wires the handler.",
 			"mayDependOn": ["Domain", "Application", "Persistence"],
 			"mustNotDependOn": []
+		},
+		{
+			"name": "Reporting",
+			"category": "shared",
+			"purpose": "Read-only projections over the domain that serve the sample's legacy report.",
+			"mayDependOn": ["Domain"],
+			"mustNotDependOn": ["Application", "Persistence", "Composition"]
 		}
 	],
 	"discouragedProjectNames": {
@@ -44,6 +54,49 @@
 		"reason": "These name a category rather than a responsibility, so nothing can be kept out of them."
 	},
 	"assemblyRules": {
+		"enabled": true,
+		"assemblyRoots": ["src"]
+	},
+	"typeRules": {
+		"enabled": true,
+		"appliesTo": {
+			"categories": ["domain", "application", "infrastructure", "shared"]
+		},
+		"excludeGeneratedCode": true
+	},
+	"apiRules": {
 		"enabled": true
-	}
+	},
+	"portRules": {
+		"enabled": true
+	},
+	"dependencyBudget": {
+		"enabled": true,
+		"failOnStale": true,
+		"entries": [
+			{ "project": "Application", "references": ["Domain"] },
+			{ "project": "Persistence.InMemory", "references": ["Domain"] },
+			{ "project": "Persistence.Json", "references": ["Domain"] },
+			{
+				"project": "Composition",
+				"references": ["Domain", "Application", "Persistence.InMemory", "Persistence.Json"]
+			},
+			{ "project": "Legacy.Reporting", "references": ["Domain"] }
+		]
+	},
+	"policyIntegrity": {
+		"checkReachability": true
+	},
+	"waiverPolicy": {
+		"maxAgeDays": 180
+	},
+	"waivers": [
+		{
+			"project": "Legacy.Reporting",
+			"mapsTo": "Reporting",
+			"rules": ["naming"],
+			"reason": "The project name predates the catalogue and is referenced by a published pipeline; renaming it is a separate change.",
+			"reviewedOn": "2026-10-18"
+		}
+	]
 }

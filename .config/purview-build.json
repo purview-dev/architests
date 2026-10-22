@@ -3,7 +3,7 @@
 		"Solution": "src/ArchitectureTesting.slnx",
 		"TestRoot": "src",
 		"TestPatterns": "*Tests.csproj",
-		"TestFilter": "/*/*/*/*[Category=Unit]/"
+		"TestFilter": "/*/*/*/*/"
 	},
 	"PackValidation": {
 		"RequiredCompilerFlags": [
@@ -17,6 +17,11 @@
 				"lib/$(TFM)/Purview.Architecture.Testing.xml",
 				"content/architecture-policy.schema.json",
 				"purview-logo-light.png"
+			],
+			"purview.architecture.testing.cli": [
+				"README.md",
+				"purview-logo-light.png",
+				"tools/net10.0/any/*"
 			]
 		}
 	},

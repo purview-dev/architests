@@ -21,6 +21,31 @@ public sealed record ProjectNode(
 
 	/// <summary>The analyzer assemblies it references directly.</summary>
 	public IReadOnlyList<string> AnalyzerReferences { get; init; } = [];
+
+	/// <summary>
+	/// The project's declared root namespace. Defaults to the project name, which is the SDK's
+	/// fallback when a project does not override it.
+	/// </summary>
+	public string RootNamespace { get; init; } = string.Empty;
+
+	/// <summary>
+	/// The packages restore resolved for the project, including transitive dependencies and packages
+	/// injected by a shared props file. Read from <c>obj/project.assets.json</c>; empty before a
+	/// restore.
+	/// </summary>
+	public IReadOnlyList<string> ResolvedPackages { get; init; } = [];
+
+	/// <summary>
+	/// The restore graph per target framework, used to separate the packages the project chose from
+	/// the packages a referenced project brought in. Empty before a restore.
+	/// </summary>
+	public IReadOnlyList<PackageTarget> PackageTargets { get; init; } = [];
+
+	/// <summary>
+	/// The assembly the project builds. The reader falls back to the project name; restore records
+	/// project dependencies by assembly name, so this is what maps them back.
+	/// </summary>
+	public string AssemblyName { get; init; } = string.Empty;
 }
 
 /// <summary>
@@ -32,7 +57,7 @@ public sealed record ProjectNode(
 /// <see cref="AssemblyGraph"/> - they catch a dependency that arrived indirectly, which the project
 /// file does not show.
 /// </remarks>
-public static class ProjectGraph
+public static partial class ProjectGraph
 {
 	/// <summary>Loads every project beneath the repository's default source folder.</summary>
 	/// <param name="repositoryRoot">The repository root.</param>
@@ -70,7 +95,97 @@ public static class ProjectGraph
 				Scan(sourceRoot, projects);
 		}
 
+		return RemapProjectReferences(projects);
+	}
+
+	/// <summary>Maps asset project keys back to project names.</summary>
+	/// <param name="projects">The project graph, keyed by project name.</param>
+	/// <returns>The same graph, with package closures keyed by project name.</returns>
+	/// <remarks>
+	/// Restore records a project dependency under its <c>AssemblyName</c>, which may be unrelated to
+	/// the project name. The ownership analysis compares it with the declared
+	/// <c>ProjectReference</c> names, so the keys are translated once here.
+	/// </remarks>
+	static Dictionary<string, ProjectNode> RemapProjectReferences(Dictionary<string, ProjectNode> projects)
+	{
+		Dictionary<string, string> byAssembly = new(StringComparer.OrdinalIgnoreCase);
+
+		foreach (var project in projects.Values)
+		{
+			var assemblyName = string.IsNullOrWhiteSpace(project.AssemblyName) ? project.Name : project.AssemblyName;
+			byAssembly.TryAdd(assemblyName, project.Name);
+		}
+
+		foreach (var name in projects.Keys.ToArray())
+		{
+			var project = projects[name];
+
+			if (project.PackageTargets.Count == 0)
+				continue;
+
+			projects[name] = project with
+			{
+				PackageTargets =
+				[
+					.. project.PackageTargets.Select(target =>
+						target with
+						{
+							ThroughReferences = RemapReferences(target.ThroughReferences, byAssembly, projects.Keys),
+						}
+					),
+				],
+			};
+		}
+
 		return projects;
+	}
+
+	/// <summary>Translates asset project keys to project names.</summary>
+	/// <param name="references">The closures keyed by assembly name.</param>
+	/// <param name="byAssembly">The assembly-to-project map.</param>
+	/// <param name="projectNames">The project names, for the suffix fallback.</param>
+	/// <returns>The closures keyed by project name.</returns>
+	/// <remarks>
+	/// The SDK derives an assembly name from the namespace prefix, so a project named
+	/// <c>Application</c> can compile to <c>Purview.Architecture.Application</c>. An exact declared
+	/// <c>AssemblyName</c> wins; otherwise a unique dotted suffix identifies the project.
+	/// </remarks>
+	static Dictionary<string, IReadOnlyList<string>> RemapReferences(
+		IReadOnlyDictionary<string, IReadOnlyList<string>> references,
+		Dictionary<string, string> byAssembly,
+		IEnumerable<string> projectNames
+	)
+	{
+		var names = projectNames.ToArray();
+		Dictionary<string, IReadOnlyList<string>> remapped = new(StringComparer.OrdinalIgnoreCase);
+
+		foreach (var reference in references)
+		{
+			remapped[ResolveProjectName(reference.Key, byAssembly, names)] = reference.Value;
+		}
+
+		return remapped;
+	}
+
+	/// <summary>Resolves an asset project key to a project name.</summary>
+	/// <param name="key">The assets key, which is an assembly name.</param>
+	/// <param name="byAssembly">The assembly-to-project map.</param>
+	/// <param name="projectNames">The project names.</param>
+	/// <returns>The project name, or the key when no single project matches.</returns>
+	static string ResolveProjectName(
+		string key,
+		Dictionary<string, string> byAssembly,
+		IReadOnlyList<string> projectNames
+	)
+	{
+		if (byAssembly.TryGetValue(key, out var exact))
+			return exact;
+
+		var matches = projectNames
+			.Where(name => key.EndsWith("." + name, StringComparison.OrdinalIgnoreCase))
+			.ToArray();
+
+		return matches.Length == 1 ? matches[0] : key;
 	}
 
 	/// <summary>Scans one source root for projects.</summary>
@@ -141,6 +256,10 @@ public static class ProjectGraph
 			.Distinct(StringComparer.OrdinalIgnoreCase)
 			.ToArray();
 
+		var rootNamespace = document.Descendants("RootNamespace").LastOrDefault()?.Value.Trim();
+		var assemblyName = document.Descendants("AssemblyName").LastOrDefault()?.Value.Trim();
+		var packageTargets = ReadPackageTargets(projectPath);
+
 		// The SDK derives IsTestProject from the folder, so the path is the reliable signal here.
 		var isTestProject =
 			name.EndsWith("Tests", StringComparison.OrdinalIgnoreCase)
@@ -153,6 +272,16 @@ public static class ProjectGraph
 		{
 			FrameworkReferences = frameworkReferences,
 			AnalyzerReferences = analyzerReferences,
+			RootNamespace = string.IsNullOrWhiteSpace(rootNamespace) ? name : rootNamespace,
+			AssemblyName = string.IsNullOrWhiteSpace(assemblyName) ? name : assemblyName,
+			ResolvedPackages =
+			[
+				.. packageTargets
+					.SelectMany(target => target.Resolved)
+					.Distinct(StringComparer.OrdinalIgnoreCase)
+					.Order(StringComparer.OrdinalIgnoreCase),
+			],
+			PackageTargets = packageTargets,
 		};
 	}
 

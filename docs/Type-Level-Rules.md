@@ -56,3 +56,21 @@ Enabled with no production assemblies found is a **failure**, not a silent pass 
 At the type level, a qualified implementation collapses into its responsibility, exactly as it does
 at the project level: a type in `Persistence.SqlServer` referencing a type in `Persistence` is a
 same-responsibility reference and is allowed.
+
+## Naming and shape
+
+The same metadata reader also exposes the **declarations** an assembly contains, which powers the
+opt-in type rules:
+
+| Rule | Checks |
+| -- | -- |
+| `typeNaming` | An interface without `I`, an attribute or exception without its suffix, a discouraged suffix |
+| `typeShape` | An unsealed public class, a public instance field, a mutable collection return, a non-static utility class |
+| `typeNamespace` | A public type outside the project's `RootNamespace` |
+| `attributePolicy` | A missing or forbidden attribute, `[Obsolete]` without a message, `InternalsVisibleTo` naming production code |
+
+They share `assemblyRules.assemblyRoots` and `assemblyGlobs`, and are configured under
+[`typeRules`](Policy-Reference.md#type-rules). The reader is metadata-only here too: it walks the
+definition tables, never loading the assembly. A public type's file path is not in metadata, so
+`typeNamespace` compares the declared namespace with `RootNamespace` and makes no claim about
+folders.

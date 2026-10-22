@@ -18,6 +18,8 @@ copied into every repository's test project.
   another.
 - **Forbidden packages and framework references** — e.g. `Microsoft.AspNetCore.App` in a portable
   layer.
+- **Type naming and shape** — interface, attribute and exception conventions; sealed classes,
+  read-only collections, root namespaces and attributes, read from metadata.
 - **Cycles, naming and test references** — the rest of the standard set, reported readably.
 - **Waivers** — reviewed, per-project departures that keep every other rule in force and are
   themselves checked.
@@ -29,7 +31,7 @@ Adoption is two things: a policy file and one derived class.
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/purview-dev/architests/main/architecture-policy.schema.json",
-  "version": 2,
+  "version": 3,
   "sourceRoots": ["src"],
   "responsibilities": [
     {
@@ -60,13 +62,54 @@ public sealed class ArchitectureTests : PurviewArchitectureTests;
 dotnet add package Purview.Architecture.Testing
 ```
 
+The same policy can be checked outside a test run:
+
+```bash
+dotnet tool install --global Purview.Architecture.Testing.Cli
+architests validate
+architests waivers list --stale
+```
+
+Exit codes are part of the contract: `0` clean, `1` findings, `2` a malformed command line.
+
+## Rules
+
+| Rule id | Catches |
+| -- | -- |
+| `policyIntegrity` | A policy that names an unknown responsibility, permits and forbids the same dependency, or declares a duplicate name or alias |
+| `graphDiscovery` | No production projects discovered, so every other rule would pass vacuously |
+| `naming` | A project name that maps to no responsibility or alias |
+| `discouragedName` | A project named after a category rather than a responsibility |
+| `dependencyMatrix` | A declared `ProjectReference` the matrix forbids or does not permit |
+| `assemblyDependencyMatrix` | A type-level reference the matrix forbids or does not permit, including one that arrives transitively |
+| `typeNaming` | A public interface without `I`, an attribute or exception without its suffix, or a discouraged suffix such as `Manager` |
+| `typeShape` | An unsealed public class, a public field, a mutable collection return, or a utility class that is not static |
+| `typeNamespace` | A public type declared outside its project's root namespace |
+| `attributePolicy` | A missing or forbidden attribute, `[Obsolete]` without a message, or `InternalsVisibleTo` naming production code |
+| `apiSurface` | The public API differs from the committed baseline |
+| `apiDocumentation` | A public type or member has no XML documentation |
+| `portImplementation` | A port in an inner layer has no implementation |
+| `portPurity` | A port exposes an infrastructure technology |
+| `dependencyBudget` | A project references beyond its budget, or the budget still allows a reference that has gone |
+| `siblingIndependence` | A qualified implementation referencing a qualified sibling |
+| `compositionBoundary` | A non-composition, non-host project referencing the composition root |
+| `forbiddenPackage` | A package the responsibility owns matching a forbidden prefix |
+| `forbiddenFramework` | A framework reference matching a forbidden prefix for the responsibility |
+| `cycle` | A cycle in the project graph |
+| `testReference` | A production project referencing a test project |
+| `waiverIntegrity` | A stale, unjustified or malformed waiver, or one excusing an unknown or unwaivable rule |
+
 ## Documentation
 
 - [Getting started](docs/Getting-Started.md) — adopt the package in a repository, step by step.
+- [Tutorial](docs/Tutorial.md) — grow one application and its policy from a two-project matrix to type, API, port and budget rules.
 - [Policy reference](docs/Policy-Reference.md) — every field, every rule id, every default.
 - [Type-level rules](docs/Type-Level-Rules.md) — how the assembly check works and how an assembly
   is attributed to a project.
+- [API contracts](docs/Contracts.md) — the committed baseline, XML documentation and the port rules.
+- [Migration and budget](docs/Migration.md) — adopt incrementally and ratchet the project graph.
 - [Extending](docs/Extending.md) — add your own rule to the standard set.
+- [Command line](docs/Cli.md) — validate, capture the API, review waivers and render the graph.
 - [The policy schema](architecture-policy.schema.json) — the published JSON Schema.
 
 ## Sample
@@ -83,8 +126,11 @@ dotnet test src/samples/ArchitectureSample/tests/Sample.ArchitectureTests/Sample
 
 - `src/src/ArchitectureTesting` — the package: policy reader, project and assembly graph, rule
   evaluator, and the TUnit base class.
+- `src/src/Architecture.CLI` — the `architests` dotnet tool.
 - `src/tests/ArchitectureTesting.UnitTests` — rule tests against in-memory and fixture graphs.
-- `src/tests/Repository.UnitTests` — the skill self-tests and the package applied to this repository.
+- `src/tests/ArchitectureTesting.CLI.UnitTests` — the tool's parser and commands.
+- `src/tests/Repository.UnitTests` — the skill self-tests, the rule/documentation drift test, and the
+  package applied to this repository.
 - `src/samples/ArchitectureSample` — the adoption sample.
 - `architecture-policy.schema.json` — the published policy schema, embedded into the package.
 - `skills/` — the agent skills this repository publishes.

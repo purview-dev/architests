@@ -1,27 +1,22 @@
 using Purview.Architecture.Application;
-using Purview.Architecture.Persistence;
+using Purview.Architecture.Domain;
+using Purview.Architecture.Persistence.InMemory;
 
 namespace Purview.Architecture.Composition;
 
 /// <summary>
-/// The composition root: the one place that selects and wires the concrete implementations.
+/// The composition root: the one place that selects an adapter and wires the handler. Composition
+/// may depend on every layer, and no layer may depend on it.
 /// </summary>
 public sealed class CompositionRoot
 {
-	/// <summary>The wired handler.</summary>
-	public PlaceOrderHandler Handler { get; } = new();
+	readonly PlaceOrderHandler _handler;
 
-	/// <summary>The wired repository.</summary>
-	public OrderRepository Repository { get; } = new();
+	/// <summary>Wires the in-memory adapter into the application handler.</summary>
+	public CompositionRoot() => _handler = new PlaceOrderHandler(new InMemoryOrderRepository());
 
-	/// <summary>Places an order and saves it.</summary>
+	/// <summary>Places an order and stores it through the wired adapter.</summary>
 	/// <param name="total">The order total.</param>
 	/// <returns>The placed order.</returns>
-	public Domain.Order PlaceAndSave(decimal total)
-	{
-		var order = Handler.Place(total);
-		Repository.Save(order);
-
-		return order;
-	}
+	public Order PlaceAndSave(decimal total) => _handler.Place(total);
 }

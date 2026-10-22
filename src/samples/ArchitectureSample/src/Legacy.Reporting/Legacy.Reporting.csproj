@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
+		<!-- The project name predates the catalogue; its waiver maps it to Reporting. -->
+		<RootNamespace>Purview.Architecture.Reporting</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>

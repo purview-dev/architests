@@ -376,7 +376,12 @@ public sealed class AssemblyRuleTests
 	public async Task EvaluateAll_GivenAnAdditionalRule_ReportsItsViolation()
 	{
 		// Arrange
-		var evaluator = Evaluator(Policy(Core), [Project("Core")], [], [new AlwaysViolatesRule("noConsoleLogging")]);
+		var evaluator = Evaluator(
+			Policy(Core, Shared),
+			[Project("Core")],
+			[],
+			[new AlwaysViolatesRule("noConsoleLogging")]
+		);
 
 		// Act
 		var violations = evaluator.EvaluateAll();

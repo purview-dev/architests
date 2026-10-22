@@ -44,6 +44,30 @@ public sealed class ArchitecturePolicy
 	[JsonPropertyName("assemblyRules")]
 	public AssemblyRules AssemblyRules { get; init; } = new();
 
+	/// <summary>The type-level naming, shape, namespace and attribute rules.</summary>
+	[JsonPropertyName("typeRules")]
+	public TypeRules TypeRules { get; init; } = new();
+
+	/// <summary>The committed-API rules: surface compatibility and documentation.</summary>
+	[JsonPropertyName("apiRules")]
+	public APIRules APIRules { get; init; } = new();
+
+	/// <summary>The port rules: implementation and technology purity.</summary>
+	[JsonPropertyName("portRules")]
+	public PortRules PortRules { get; init; } = new();
+
+	/// <summary>The dependency ratchet.</summary>
+	[JsonPropertyName("dependencyBudget")]
+	public DependencyBudget DependencyBudget { get; init; } = new();
+
+	/// <summary>The policy's own consistency checks.</summary>
+	[JsonPropertyName("policyIntegrity")]
+	public PolicyIntegritySettings PolicyIntegrity { get; init; } = new();
+
+	/// <summary>How long a waiver may go unreviewed.</summary>
+	[JsonPropertyName("waiverPolicy")]
+	public WaiverPolicySettings WaiverPolicy { get; init; } = new();
+
 	[JsonPropertyName("waivers")]
 	public IReadOnlyList<PolicyWaiver> Waivers { get; init; } = [];
 
@@ -80,14 +104,18 @@ public sealed class ArchitecturePolicy
 	}
 
 	/// <summary>Finds the repository root by walking up to the folder holding the policy.</summary>
+	/// <param name="startDirectory">
+	/// Where the walk starts. Defaults to the application's base directory, which is where a test
+	/// binary runs; a command-line tool starts from its working directory instead.
+	/// </param>
 	/// <returns>The repository root path.</returns>
 	/// <remarks>
 	/// The test binary runs from <c>bin/</c>, and the depth of that path differs between a local build
 	/// and CI, so the root is found by probing for a marker rather than by counting parents.
 	/// </remarks>
-	public static string RepositoryRoot()
+	public static string RepositoryRoot(string? startDirectory = null)
 	{
-		DirectoryInfo? directory = new(AppContext.BaseDirectory);
+		DirectoryInfo? directory = new(startDirectory ?? AppContext.BaseDirectory);
 		while (directory is not null)
 		{
 			if (File.Exists(Path.Combine(directory.FullName, RelativePath)))
@@ -172,6 +200,14 @@ public sealed class Responsibility
 	public IReadOnlyList<string> ForbiddenPackagePrefixes { get; init; } = [];
 
 	/// <summary>
+	/// What <c>forbiddenPackage</c> measures: <c>own</c> (default) checks the packages the project
+	/// declares or its own package references bring in, excluding packages explained by a permitted
+	/// project reference; <c>closure</c> checks the whole restore closure.
+	/// </summary>
+	[JsonPropertyName("forbiddenPackageScope")]
+	public string ForbiddenPackageScope { get; init; } = "own";
+
+	/// <summary>
 	/// Framework references that must not appear in this responsibility, such as
 	/// <c>Microsoft.AspNetCore.App</c> in a portable layer.
 	/// </summary>
@@ -224,6 +260,28 @@ public sealed class AssemblyRules
 	/// <summary>File globs matched under each assembly root. Defaults to every managed assembly.</summary>
 	[JsonPropertyName("assemblyGlobs")]
 	public IReadOnlyList<string> AssemblyGlobs { get; init; } = ["*.dll"];
+}
+
+/// <summary>Settings for the policy's own consistency checks.</summary>
+public sealed class PolicyIntegritySettings
+{
+	/// <summary>
+	/// Whether to prove each <c>mustNotDependOn</c> is enforceable: a prohibition is meaningless when
+	/// the permitted <c>mayDependOn</c> closure can reach the forbidden responsibility anyway.
+	/// </summary>
+	[JsonPropertyName("checkReachability")]
+	public bool CheckReachability { get; init; }
+}
+
+/// <summary>How long a waiver may go unreviewed.</summary>
+public sealed class WaiverPolicySettings
+{
+	/// <summary>
+	/// The maximum age, in days, of a waiver's <c>reviewedOn</c> date. Unset by default, so expiry is
+	/// opt-in; a policy that adopts it turns "reviewed" from a note into an obligation.
+	/// </summary>
+	[JsonPropertyName("maxAgeDays")]
+	public int? MaxAgeDays { get; init; }
 }
 
 /// <summary>A deliberate, reviewed departure from the policy for one project.</summary>
