@@ -607,9 +607,9 @@ contract, so growing it is deliberate. A missing baseline is itself a failure, b
 that silently checks nothing is worse than no rule.
 
 `portRules` treats interfaces in the `domain` and `application` categories as ports. It reports a port
-with no public implementation, and a port whose signature names an infrastructure technology. The
-default forbidden prefixes are `Microsoft.EntityFrameworkCore`, `System.Data`, `Microsoft.AspNetCore`
-and `System.Net.Http`.
+with no implementation — `internal` adapters count — and a port whose signature names an
+infrastructure technology. The default forbidden prefixes are `Microsoft.EntityFrameworkCore`,
+`System.Data`, `Microsoft.AspNetCore` and `System.Net.Http`.
 
 Capture the baseline once, before enforcing it:
 
@@ -671,7 +671,7 @@ public interface IOrderNotifier
 `portImplementation` reports:
 
 ```text
-'Domain.IOrderNotifier' is a port in Domain with no public implementation in the repository.
+'Domain.IOrderNotifier' is a port in Domain with no implementation in the repository.
 Implement it in an adapter, or remove it: an unimplemented contract is a boundary nobody crossed.
 ```
 

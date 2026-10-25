@@ -13,6 +13,7 @@ dotnet tool install --global Purview.Architecture.Testing.Cli
 ## Use
 
 ```text
+architests check [--format text|json|sarif]
 architests validate                     # schema + policyIntegrity
 architests api capture                  # write .config/api-surface.json
 architests api check [--format text|json|sarif]
@@ -22,9 +23,18 @@ architests --help
 architests --version
 ```
 
-Both commands accept `--repository <path>` (or `-r`). Without it, the tool walks up from the
+Every command accepts `--repository <path>` (or `-r`). Without it, the tool walks up from the
 current directory to the folder holding `.config/architecture-policy.json`, and stops at the
 repository boundary rather than reading a parent folder's policy.
+
+### `check`
+
+Runs **every rule** against the repository, reporting what the test suite would — for a repository
+with no test project, or a pipeline step that should fail before the tests run. It needs a build,
+because the type-level, API and port rules read compiled assemblies.
+
+`--format sarif` emits SARIF 2.1.0 carrying each rule's title and description, with findings
+pointed at the offending `.csproj`, so violations appear as annotations in a pull request.
 
 ### Exit codes
 

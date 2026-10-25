@@ -76,7 +76,11 @@ public sealed partial class ArchitecturePolicyEvaluator
 
 			var documented = XMLDocumentation.Read(assembly.Path);
 
-			foreach (var type in assembly.Types.Where(candidate => candidate.IsPublic))
+			// A compiler-synthesized container has no source to document, and its hash-based name is
+			// not something an author could write a <summary> for.
+			foreach (
+				var type in assembly.Types.Where(candidate => candidate.IsPublic && !candidate.IsCompilerSynthesized)
+			)
 			{
 				if (Policy.APIRules.RequireTypeDocumentation && !documented.Contains(XMLDocumentation.TypeId(type)))
 				{
@@ -137,9 +141,13 @@ public sealed partial class ArchitecturePolicyEvaluator
 			? APIBaseline.RelativePath
 			: policy.APIRules.Baseline;
 
+		// Resolved outside the try: a path that escapes the repository is a broken policy, not a
+		// missing baseline, and the catches below would turn it into the latter.
+		var path = PolicyPath.Resolve(root, relative, "apiRules.baseline");
+
 		try
 		{
-			return APIBaseline.Read(Path.Combine(root, relative));
+			return APIBaseline.Read(path);
 		}
 		catch (FileNotFoundException)
 		{

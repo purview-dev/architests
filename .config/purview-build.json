@@ -9,7 +9,7 @@
 		"RequiredCompilerFlags": [
 			"optimization=release"
 		],
-		"RequireSymbolPackage": false,
+		"RequireSymbolPackage": true,
 		"RequiredContent": {
 			"purview.architecture.testing": [
 				"README.md",

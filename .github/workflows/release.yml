@@ -4,24 +4,39 @@ on:
   push:
     branches: [main]
 
+# contents: write is needed for the tag and the GitHub release. packages: write is deliberately
+# not granted: the shared release workflow declares `packages: read`, and a callee's block is
+# authoritative, so granting more here only misleads the reader.
 permissions:
-  contents: write
-  # The shared release workflow pushes the same packages to nuget.org and, when
-  # PURVIEW_PUBLISH_GITHUB_PACKAGES=true, to GitHub Packages. A reusable workflow cannot grant
-  # more than its caller, so the permission is declared here.
-  packages: write
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel a release in flight. A publish interrupted between pushing the package and
+  # creating the tag leaves the two out of step, which is far worse than a queued run.
+  cancel-in-progress: false
 
 jobs:
   release:
     name: Release packages
-    uses: purview-dev/build/.github/workflows/purview-release.yml@main
+    permissions:
+      contents: write
+    # Pinned to a commit, not @main: this workflow holds the nuget.org credential, so a moving ref
+    # is a moving trust boundary. Bump deliberately, with the diff reviewed.
+    uses: purview-dev/build/.github/workflows/purview-release.yml@f2c2d7dd8a80e0d0a084a292fdb87865c6857126 # main @ 2026-10-25
     with:
       # Keep in sync with `sdk.version` in global.json (and with pr.yml).
       dotnet-version: "11.0.100-rc.2.26504.105"
+      # Pinned so a release is built by a known tool version rather than whatever is latest.
+      build-version: "0.8.0"
       release-mode: NuGet
       release-branch: main
-    secrets: inherit
+    # Explicit rather than `secrets: inherit`: the release needs the nuget.org key and nothing
+    # else, and inherit forwards every secret the repository and organisation hold.
+    #
+    # TODO: remove once purview-dev/build grants `id-token: write` and exchanges an OIDC token for
+    # a short-lived nuget.org key. The `trusted-publishing` input already exists but is a no-op
+    # today, because no workflow in that repository requests the token.
+    secrets:
+      NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
+      NUGET__APIKEY: ${{ secrets.NUGET__APIKEY }}

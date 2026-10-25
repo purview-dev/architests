@@ -12,17 +12,33 @@ sealed record APIContext(string Root, ArchitecturePolicy Policy, IReadOnlyDictio
 	/// <summary>Resolves the baseline path for a command.</summary>
 	/// <param name="baseline">The <c>--baseline</c> override, or <see langword="null"/>.</param>
 	/// <returns>The absolute baseline path.</returns>
+	/// <exception cref="InvalidOperationException">
+	/// The policy's <c>apiRules.baseline</c> resolves outside the repository.
+	/// </exception>
+	/// <remarks>
+	/// The two sources are not equally trusted, because <c>api capture</c> <b>writes</b> this path.
+	/// <list type="bullet">
+	/// <item>
+	/// <c>--baseline</c> is typed by whoever runs the tool, so an absolute path is an explicit
+	/// instruction and is honoured, as it would be for any command-line tool.
+	/// </item>
+	/// <item>
+	/// <c>apiRules.baseline</c> comes from a file that arrives with a pull request. Left
+	/// unconstrained it is an arbitrary-file-write primitive chosen by the policy rather than by
+	/// the person running the command, so it is confined to the repository.
+	/// </item>
+	/// </list>
+	/// </remarks>
 	public string BaselinePath(string? baseline)
 	{
-		var relative =
-			baseline
-			?? (
-				string.IsNullOrWhiteSpace(Policy.APIRules.Baseline)
-					? APIBaseline.RelativePath
-					: Policy.APIRules.Baseline
-			);
+		if (!string.IsNullOrWhiteSpace(baseline))
+			return Path.IsPathRooted(baseline) ? baseline : Path.Combine(Root, baseline);
 
-		return Path.IsPathRooted(relative) ? relative : Path.Combine(Root, relative);
+		var relative = string.IsNullOrWhiteSpace(Policy.APIRules.Baseline)
+			? APIBaseline.RelativePath
+			: Policy.APIRules.Baseline;
+
+		return PolicyPath.Resolve(Root, relative, "apiRules.baseline");
 	}
 
 	/// <summary>Loads a repository, its policy and its compiled surfaces.</summary>

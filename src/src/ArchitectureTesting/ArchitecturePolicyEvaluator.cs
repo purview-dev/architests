@@ -633,6 +633,25 @@ public sealed partial class ArchitecturePolicyEvaluator
 			.All.Concat(_additionalRules.Select(rule => rule.Rule))
 			.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+		// WaiverFor takes the first match, so a second waiver for the same project never applies.
+		// Its rules look excused in the file and are still enforced, which is the worst way for a
+		// waiver to fail: silently, and in the direction the author did not expect.
+		foreach (
+			var duplicate in Policy
+				.Waivers.GroupBy(waiver => waiver.Project, StringComparer.OrdinalIgnoreCase)
+				.Where(group => group.Count() > 1)
+		)
+		{
+			violations.Add(
+				new ArchitectureViolation(
+					ArchitectureRules.WaiverIntegrity,
+					duplicate.Key,
+					$"'{duplicate.Key}' has {duplicate.Count()} waivers. Only the first applies, so the rules named "
+						+ "by the others are still enforced. Merge them into one."
+				)
+			);
+		}
+
 		foreach (var waiver in Policy.Waivers)
 		{
 			if (!Projects.ContainsKey(waiver.Project))

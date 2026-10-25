@@ -20,7 +20,10 @@ public sealed partial class ArchitecturePolicyEvaluator
 				if (!type.IsPublic)
 					continue;
 
-				if (Policy.TypeRules.ExcludeGeneratedCode && type.IsGeneratedCode)
+				// Generated means attribute-marked or compiler-synthesized. A synthesized type carries
+				// no attributes at all - an extension block's <G>$… container is the common case - so
+				// the attribute check alone lets through types no author can seal, rename or move.
+				if (Policy.TypeRules.ExcludeGeneratedCode && (type.IsGeneratedCode || type.IsCompilerSynthesized))
 					continue;
 
 				if (

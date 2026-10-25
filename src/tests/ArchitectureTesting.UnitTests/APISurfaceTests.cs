@@ -86,6 +86,49 @@ public sealed class APISurfaceTests
 		await Assert.That(attribute.StringArgument).IsEqualTo("version");
 	}
 
+	/// <summary>
+	/// Reads the container the compiler emits for <see cref="ExtensionFixture"/>'s extension block,
+	/// from real metadata rather than a hand-built model.
+	/// </summary>
+	/// <remarks>
+	/// The assertion that matters is that at least one container is synthesized and carries neither
+	/// <c>[CompilerGenerated]</c> nor <c>[GeneratedCode]</c>: that is the type the attribute check
+	/// alone lets through and the type rules then report unactionably.
+	/// </remarks>
+	[Test]
+	public async Task Read_GivenAnExtensionBlockContainer_ReportsItAsCompilerSynthesized()
+	{
+		// Arrange
+		var types = APISurface.Read(typeof(APISurfaceTests).Assembly.Location);
+
+		// Act
+		var containers = types
+			.Where(type => type.FullName.Contains("ExtensionFixture", StringComparison.Ordinal))
+			.ToArray();
+
+		// Assert
+		await Assert
+			.That(containers.Any(type => type.IsCompilerSynthesized))
+			.IsTrue()
+			.Because("the compiler emits a <G>$… container for an extension block");
+
+		await Assert
+			.That(containers.Any(type => type.IsCompilerSynthesized && !type.IsGeneratedCode))
+			.IsTrue()
+			.Because("a container the attribute check misses is the whole reason the name check exists");
+	}
+
+	/// <summary>A hand-written type is not mistaken for a synthesized one.</summary>
+	[Test]
+	public async Task Read_GivenAHandWrittenType_IsNotCompilerSynthesized()
+	{
+		// Act
+		var type = PackageType("ArchitecturePolicy");
+
+		// Assert
+		await Assert.That(type.IsCompilerSynthesized).IsFalse();
+	}
+
 	[Test]
 	public async Task ReadAssembly_GivenAProjectAssembly_AttributesItThroughTheSdkMarker()
 	{

@@ -8,7 +8,7 @@ compiled assemblies by metadata only and are off by default, because they need a
 | -- | -- | -- |
 | `apiSurface` | `apiRules` | The public API differs from the committed baseline |
 | `apiDocumentation` | `apiRules` | A public type or member has no XML documentation |
-| `portImplementation` | `portRules` | A port in an inner layer has no public implementation |
+| `portImplementation` | `portRules` | A port in an inner layer has no implementation |
 | `portPurity` | `portRules` | A port's signature names an infrastructure technology |
 
 ```json
@@ -84,9 +84,14 @@ by this definition.
 
 ### `portImplementation`
 
-Every port needs at least one **public implementation** in a production project. An unimplemented port
+Every port needs at least one **implementation** in a production project. An unimplemented port
 is either dead or a boundary nobody crossed; both deserve a review. The dependency matrix still
 governs where that implementation may live.
+
+An `internal` adapter counts. Visibility does not change whether the boundary was crossed, and an
+adapter only the composition root wires is commonly `internal` — as are generator-emitted ones. Set
+`portRules.requirePublicImplementation` to `true` if the repository ships its adapters as public API
+and wants that enforced.
 
 An extension point implemented only by consumers (such as this package's `IArchitectureRule`) is not a
 good fit: keep it out of the port categories, or record a narrow waiver.

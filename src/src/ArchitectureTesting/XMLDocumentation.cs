@@ -23,8 +23,7 @@ public static class XMLDocumentation
 		if (!File.Exists(path))
 			return new HashSet<string>(StringComparer.Ordinal);
 
-		using var stream = File.OpenRead(path);
-		var document = XDocument.Load(stream);
+		var document = SafeXml.Load(path, "XML documentation file");
 
 		return document
 			.Descendants("member")

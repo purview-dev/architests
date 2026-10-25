@@ -3,6 +3,18 @@ using System.Text.Json.Serialization;
 
 namespace Purview.Architecture.Testing;
 
+/// <summary>Conventions a policy records for its readers, rather than for the evaluator.</summary>
+/// <param name="QualifiedNameSeparator">
+/// Separates a responsibility from its implementation qualifier, as in <c>Persistence.SqlServer</c>.
+/// </param>
+/// <param name="DependencyArrowMeaning">
+/// States what an arrow means, so a compile-time reference is not confused with a runtime call.
+/// </param>
+public sealed record PolicyConventions(
+	[property: JsonPropertyName("qualifiedNameSeparator")] string? QualifiedNameSeparator,
+	[property: JsonPropertyName("dependencyArrowMeaning")] string? DependencyArrowMeaning
+);
+
 /// <summary>
 /// The dependency and naming policy, read from <c>.config/architecture-policy.json</c>.
 /// </summary>
@@ -16,7 +28,43 @@ public sealed class ArchitecturePolicy
 	{
 		PropertyNameCaseInsensitive = true,
 		ReadCommentHandling = JsonCommentHandling.Skip,
+		// A key the reader does not recognise is a mistake, and the most expensive kind: a typo in
+		// a rule group's name leaves that group at its defaults - usually off - so the author
+		// believes a rule is enforced while nothing checks it. The schema catches this too, but
+		// schema validation is a separate call that a consumer can skip; the reader should not
+		// depend on it having run.
+		UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
 	};
+
+	/// <summary>
+	/// The largest policy file the reader will accept, in bytes.
+	/// </summary>
+	/// <remarks>
+	/// The policy is read whole into memory before parsing. A real one is a few kilobytes; the cap
+	/// exists so a pathological file is reported rather than read.
+	/// </remarks>
+	public const int MaximumSizeInBytes = 4 * 1024 * 1024;
+
+	/// <summary>
+	/// The <c>$schema</c> pointer, so an editor validates the file as it is written.
+	/// </summary>
+	/// <remarks>
+	/// Bound but never read. Declared because the reader rejects any key it does not recognise, and
+	/// a key the schema allows is not a mistake.
+	/// </remarks>
+	[JsonPropertyName("$schema")]
+	public string? Schema { get; init; }
+
+	/// <summary>Free text describing the policy. Bound but never read.</summary>
+	[JsonPropertyName("description")]
+	public string? Description { get; init; }
+
+	/// <summary>
+	/// Conventions recorded for human readers and editors. Bound but never read: the evaluator's
+	/// behaviour comes from the rules, not from a description of them.
+	/// </summary>
+	[JsonPropertyName("conventions")]
+	public PolicyConventions? Conventions { get; init; }
 
 	[JsonPropertyName("version")]
 	public int Version { get; init; }
@@ -95,6 +143,16 @@ public sealed class ArchitecturePolicy
 				$"The architecture policy was not found at '{path}'. Add one, pointing its $schema at "
 					+ $"{PolicySchemaValidator.SchemaId}",
 				path
+			);
+		}
+
+		var length = new FileInfo(path).Length;
+		if (length > MaximumSizeInBytes)
+		{
+			throw new InvalidOperationException(
+				$"The architecture policy at '{path}' is {length:N0} bytes, which exceeds the "
+					+ $"{MaximumSizeInBytes:N0} byte limit. A policy describes a repository's responsibilities; "
+					+ "a file this large is not one."
 			);
 		}
 

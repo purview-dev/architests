@@ -41,7 +41,7 @@ class compiles, the run is green, and nothing is enforced.
 | Waivers | `naming` via `Legacy.Reporting` | the name is excused with `mapsTo: Reporting`; every dependency rule still applies to the project |
 | Type rules | `typeNaming`, `typeShape`, `typeNamespace`, `attributePolicy` | interfaces are `I`-prefixed, classes are sealed, collections are read-only, every type sits under its project's `RootNamespace`, and no `[Obsolete]` lacks a message |
 | Contracts | `apiSurface`, `apiDocumentation` | the public API matches `.config/api-surface.json`; every public type has XML documentation |
-| Ports | `portImplementation`, `portPurity` | `IOrderRepository` has two public implementations and names no infrastructure technology |
+| Ports | `portImplementation`, `portPurity` | `IOrderRepository` has two implementations and names no infrastructure technology |
 | Adoption | `dependencyBudget` | one entry per production project; a new reference fails, and a stale allowance fails with `failOnStale` |
 
 The sample's six projects compile to six assemblies, so the type-level and contract readers have

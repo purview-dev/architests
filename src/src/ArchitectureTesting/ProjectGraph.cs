@@ -1,5 +1,3 @@
-using System.Xml.Linq;
-
 namespace Purview.Architecture.Testing;
 
 /// <summary>A project in the solution, with the references it declares.</summary>
@@ -87,7 +85,9 @@ public static partial class ProjectGraph
 		Dictionary<string, ProjectNode> projects = new(StringComparer.OrdinalIgnoreCase);
 
 		var roots =
-			sourceRoots.Count == 0 ? [repositoryRoot] : sourceRoots.Select(root => Path.Combine(repositoryRoot, root));
+			sourceRoots.Count == 0
+				? [repositoryRoot]
+				: sourceRoots.Select(root => PolicyPath.Resolve(repositoryRoot, root, "sourceRoots"));
 
 		foreach (var sourceRoot in roots)
 		{
@@ -220,7 +220,7 @@ public static partial class ProjectGraph
 	/// <returns>The project node.</returns>
 	static ProjectNode Read(string projectPath)
 	{
-		var document = XDocument.Load(projectPath);
+		var document = SafeXml.Load(projectPath, "project file");
 		var name = Path.GetFileNameWithoutExtension(projectPath);
 
 		var projectReferences = document

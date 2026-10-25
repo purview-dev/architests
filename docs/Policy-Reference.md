@@ -38,6 +38,27 @@ Version 2 removed the `rules` object (`noCycles`, `noProductionToTestReferences`
 deserialised but never consulted. Use `SkipRule` or a waiver to opt out of a rule. A version-1 policy
 that set `rules` must delete the block; a version-1 policy that did not still validates.
 
+### Paths and globs are confined to the repository
+
+Every path the policy names — `sourceRoots`, `assemblyRules.assemblyRoots`, `apiRules.baseline` —
+is resolved relative to the repository root and must stay inside it. A path that escapes with `..`
+or an absolute path is reported, naming the field.
+
+This matters most for `apiRules.baseline`, because `architests api capture` **writes** it. A
+`--baseline` given on the command line may point anywhere: that is the operator's explicit
+instruction. The policy's value may not, because a policy arrives with a pull request.
+
+`assemblyRules.assemblyGlobs` entries match a **file name** — `*.dll` — and may not contain a path
+separator or `..`. .NET accepts a relative path in a search pattern, so a glob could otherwise walk
+out of the root it was just confined to. Choose directories with `assemblyRoots`, not with the glob.
+
+### Unknown keys are rejected
+
+The reader fails on a key it does not recognise. A mistyped group name — `typeRulez` for
+`typeRules` — would otherwise leave that group at its default, which is off, so a rule you believe
+is enforced quietly checks nothing. `$schema`, `description` and `conventions` are recognised and
+ignored; they are for you and your editor.
+
 ## Responsibilities
 
 | Field | Type | Required | Meaning |
@@ -122,7 +143,7 @@ the API a consumer can call. The group is off by default because it needs a buil
 | -- | -- | -- | -- |
 | `enabled` | boolean | `false` | Whether the type-level rules run. |
 | `appliesTo.categories` | string[] | `[]` | Categories to govern. Empty governs every production responsibility. |
-| `excludeGeneratedCode` | boolean | `true` | Skip `[GeneratedCode]` and `[CompilerGenerated]` types. |
+| `excludeGeneratedCode` | boolean | `true` | Skip generated types: see [What counts as generated](#what-counts-as-generated). |
 | `excludeNamespacePrefixes` | string[] | `[]` | Namespace prefixes to skip, such as a generated client. |
 | `discouragedTypeSuffixes` | string[] | `["Manager", "Helper", "Util", "Impl"]` | Suffixes that name a mechanism rather than a responsibility. |
 | `sealConcreteClasses` | boolean | `true` | Require a public concrete class to be sealed. |
@@ -139,6 +160,25 @@ the API a consumer can call. The group is off by default because it needs a buil
   "excludeGeneratedCode": true
 }
 ```
+
+### What counts as generated
+
+`excludeGeneratedCode` skips a type that is **either**:
+
+- **attribute-marked** — it carries `[GeneratedCode]` or `[CompilerGenerated]`; or
+- **compiler-synthesized** — its metadata name begins with `<`, which is reserved for the compiler
+  because the character is not legal in a C# identifier.
+
+The second clause matters more than it looks. A C# extension block emits a container named
+`<G>$<hash>` that carries **no attributes at all**, so the attribute check alone lets it through.
+It then looks exactly like a utility class that forgot to be `static`, and its namespace reads as
+empty, so `typeShape` and `typeNamespace` both report it — asking an author to seal or move a type
+that does not exist in their source. The same applies to lambda display classes, iterator and async
+state machines, and `<PrivateImplementationDetails>`.
+
+A public **nested** type takes its namespace from the type that declares it. Metadata stores no
+namespace on a nested type, so reading it directly would make every public nested type look like it
+lives in the global namespace.
 
 ### Type naming
 
@@ -236,14 +276,24 @@ Off by default because it reads compiled assemblies.
 | -- | -- | -- | -- |
 | `enabled` | boolean | `false` | Whether the port rules run. |
 | `categories` | string[] | `["domain", "application"]` | The categories whose interfaces are ports. |
+| `requirePublicImplementation` | boolean | `false` | Require a port's implementation to be public. |
 | `forbiddenTypePrefixes` | string[] | common infrastructure prefixes | Types a port's signature must not name. |
 
 ### Port implementation
 
-`portImplementation` reports an interface in a port category with **no public implementation**
-anywhere in the repository. An unimplemented contract is either dead or a boundary nobody crossed;
-both are worth a review. A port implemented in any production project passes — the dependency matrix
-still governs where that implementation may live.
+`portImplementation` reports an interface in a port category with **no implementation** anywhere in
+the repository. An unimplemented contract is either dead or a boundary nobody crossed; both are
+worth a review. A port implemented in any production project passes — the dependency matrix still
+governs where that implementation may live.
+
+**An `internal` implementation counts.** The rule asks whether the boundary was crossed, and
+visibility does not change the answer: an adapter that only the composition root wires is commonly
+`internal`, and keeping it so is good practice rather than a departure worth a waiver. Generator-
+emitted adapters are usually `internal sealed` too. Requiring a public implementation would report
+a repository whose ports are all implemented, which tells the reader nothing.
+
+Set `requirePublicImplementation` to `true` if a repository ships its adapters as public API and
+wants that enforced. It is off by default so the rule's default behaviour matches its stated intent.
 
 ### Port purity
 
@@ -356,7 +406,7 @@ id is a `waiverIntegrity` failure, so a typo cannot silently excuse nothing.
 | `attributePolicy` | A required attribute missing, a forbidden one present, `[Obsolete]` without a message, or `InternalsVisibleTo` naming production code. |
 | `apiSurface` | The public API differs from its committed baseline. |
 | `apiDocumentation` | A public type or member has no XML documentation entry. |
-| `portImplementation` | An interface in a port category has no public implementation. |
+| `portImplementation` | An interface in a port category has no implementation. |
 | `portPurity` | A port's signature exposes a forbidden infrastructure technology. |
 | `dependencyBudget` | A project references beyond its budget, or the budget still allows a hook that has gone. Not waivable. |
 | `siblingIndependence` | A qualified implementation referencing a qualified sibling. |

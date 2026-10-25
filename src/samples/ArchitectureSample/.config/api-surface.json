@@ -207,6 +207,25 @@
               "parameters": []
             }
           ]
+        },
+        {
+          "name": "Purview.Architecture.Domain.OrderExtensions",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "get_IsFree",
+              "typeName": "System.Boolean",
+              "isStatic": true,
+              "parameters": [
+                "Purview.Architecture.Domain.Order"
+              ]
+            }
+          ]
         }
       ]
     },

@@ -24,6 +24,7 @@
 	</Folder>
 	<Folder Name="/tests/">
 		<Project Path="tests/ArchitectureTesting.UnitTests/ArchitectureTesting.UnitTests.csproj" />
+		<Project Path="tests/ArchitectureTesting.AcceptanceTests/ArchitectureTesting.AcceptanceTests.csproj" />
 		<Project Path="tests/ArchitectureTesting.CLI.UnitTests/ArchitectureTesting.CLI.UnitTests.csproj" />
 		<Project Path="tests/Repository.UnitTests/Repository.UnitTests.csproj" />
 	</Folder>

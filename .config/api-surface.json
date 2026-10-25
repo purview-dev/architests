@@ -645,6 +645,13 @@
             },
             {
               "kind": "Property",
+              "name": "GenericArity",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
               "name": "IsStatic",
               "typeName": "System.Boolean",
               "isStatic": false,
@@ -666,8 +673,22 @@
             },
             {
               "kind": "Property",
+              "name": "OverloadKey",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
               "name": "Parameters",
               "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Signature",
+              "typeName": "System.String",
               "isStatic": false,
               "parameters": []
             },
@@ -988,6 +1009,13 @@
             },
             {
               "kind": "Property",
+              "name": "GenericArity",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
               "name": "IsStatic",
               "typeName": "System.Boolean",
               "isStatic": false,
@@ -1143,21 +1171,21 @@
             },
             {
               "kind": "Method",
-              "name": "Read",
-              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIType>",
-              "isStatic": true,
-              "parameters": [
-                "System.String"
-              ]
-            },
-            {
-              "kind": "Method",
               "name": "ReadAssembly",
               "typeName": "Purview.Architecture.Testing.APIAssembly",
               "isStatic": true,
               "parameters": [
                 "System.String",
                 "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Read",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.APIType>",
+              "isStatic": true,
+              "parameters": [
+                "System.String"
               ]
             }
           ]
@@ -1297,6 +1325,13 @@
             },
             {
               "kind": "Property",
+              "name": "IsCompilerSynthesized",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
               "name": "IsException",
               "typeName": "System.Boolean",
               "isStatic": false,
@@ -1353,14 +1388,14 @@
             },
             {
               "kind": "Property",
-              "name": "Name",
+              "name": "Namespace",
               "typeName": "System.String",
               "isStatic": false,
               "parameters": []
             },
             {
               "kind": "Property",
-              "name": "Namespace",
+              "name": "Name",
               "typeName": "System.String",
               "isStatic": false,
               "parameters": []
@@ -1547,6 +1582,13 @@
               "parameters": []
             },
             {
+              "kind": "Field",
+              "name": "MaximumSizeInBytes",
+              "typeName": "System.Int32",
+              "isStatic": true,
+              "parameters": []
+            },
+            {
               "kind": "Method",
               "name": "Classify",
               "typeName": "Purview.Architecture.Testing.Responsibility",
@@ -1598,8 +1640,22 @@
             },
             {
               "kind": "Property",
+              "name": "Conventions",
+              "typeName": "Purview.Architecture.Testing.PolicyConventions",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
               "name": "DependencyBudget",
               "typeName": "Purview.Architecture.Testing.DependencyBudget",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Description",
+              "typeName": "System.String",
               "isStatic": false,
               "parameters": []
             },
@@ -1635,6 +1691,13 @@
               "kind": "Property",
               "name": "Responsibilities",
               "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.Responsibility>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "Schema",
+              "typeName": "System.String",
               "isStatic": false,
               "parameters": []
             },
@@ -1690,7 +1753,12 @@
               "isStatic": false,
               "parameters": [
                 "Purview.Architecture.Testing.ArchitecturePolicy",
-                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>"
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.AssemblyNode>",
+                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.IArchitectureRule>",
+                "System.Nullable<System.DateOnly>",
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>",
+                "Purview.Architecture.Testing.APIBaseline"
               ]
             },
             {
@@ -1700,12 +1768,7 @@
               "isStatic": false,
               "parameters": [
                 "Purview.Architecture.Testing.ArchitecturePolicy",
-                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
-                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.AssemblyNode>",
-                "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.IArchitectureRule>",
-                "System.Nullable<System.DateOnly>",
-                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.APIAssembly>",
-                "Purview.Architecture.Testing.APIBaseline"
+                "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>"
               ]
             },
             {
@@ -1810,19 +1873,19 @@
             },
             {
               "kind": "Method",
+              "name": "EvaluateAdditionalRules",
+              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
               "name": "EvaluateAdditionalRule",
               "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
               "isStatic": false,
               "parameters": [
                 "System.String"
               ]
-            },
-            {
-              "kind": "Method",
-              "name": "EvaluateAdditionalRules",
-              "typeName": "System.Collections.Generic.IReadOnlyList<Purview.Architecture.Testing.ArchitectureViolation>",
-              "isStatic": false,
-              "parameters": []
             },
             {
               "kind": "Method",
@@ -2927,6 +2990,91 @@
           ]
         },
         {
+          "name": "Purview.Architecture.Testing.PolicyConventions",
+          "kind": "Class",
+          "isAbstract": false,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [
+            "System.IEquatable<Purview.Architecture.Testing.PolicyConventions>"
+          ],
+          "members": [
+            {
+              "kind": "Constructor",
+              "name": ".ctor",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String",
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "<Clone>$",
+              "typeName": "Purview.Architecture.Testing.PolicyConventions",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "Deconstruct",
+              "typeName": "System.Void",
+              "isStatic": false,
+              "parameters": [
+                "System.String&",
+                "System.String&"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "Purview.Architecture.Testing.PolicyConventions"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "Equals",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": [
+                "System.Object"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "GetHashCode",
+              "typeName": "System.Int32",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Method",
+              "name": "ToString",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "DependencyArrowMeaning",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "QualifiedNameSeparator",
+              "typeName": "System.String",
+              "isStatic": false,
+              "parameters": []
+            }
+          ]
+        },
+        {
           "name": "Purview.Architecture.Testing.PolicyIntegritySettings",
           "kind": "Class",
           "isAbstract": false,
@@ -2947,6 +3095,38 @@
               "typeName": "System.Boolean",
               "isStatic": false,
               "parameters": []
+            }
+          ]
+        },
+        {
+          "name": "Purview.Architecture.Testing.PolicyPath",
+          "kind": "Class",
+          "isAbstract": true,
+          "isSealed": true,
+          "baseType": "System.Object",
+          "interfaces": [],
+          "members": [
+            {
+              "kind": "Method",
+              "name": "Resolve",
+              "typeName": "System.String",
+              "isStatic": true,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.String"
+              ]
+            },
+            {
+              "kind": "Method",
+              "name": "TryResolve",
+              "typeName": "System.Boolean",
+              "isStatic": true,
+              "parameters": [
+                "System.String",
+                "System.String",
+                "System.String&"
+              ]
             }
           ]
         },
@@ -3072,6 +3252,13 @@
               "typeName": "System.Collections.Generic.IReadOnlyList<System.String>",
               "isStatic": false,
               "parameters": []
+            },
+            {
+              "kind": "Property",
+              "name": "RequirePublicImplementation",
+              "typeName": "System.Boolean",
+              "isStatic": false,
+              "parameters": []
             }
           ]
         },
@@ -3098,7 +3285,8 @@
               "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
               "isStatic": true,
               "parameters": [
-                "System.String"
+                "System.String",
+                "System.Collections.Generic.IReadOnlyList<System.String>"
               ]
             },
             {
@@ -3107,8 +3295,7 @@
               "typeName": "System.Collections.Generic.IReadOnlyDictionary<System.String, Purview.Architecture.Testing.ProjectNode>",
               "isStatic": true,
               "parameters": [
-                "System.String",
-                "System.Collections.Generic.IReadOnlyList<System.String>"
+                "System.String"
               ]
             }
           ]

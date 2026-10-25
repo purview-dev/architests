@@ -66,6 +66,8 @@ The same policy can be checked outside a test run:
 
 ```bash
 dotnet tool install --global Purview.Architecture.Testing.Cli
+architests check                  # every rule, as the test suite would
+architests check --format sarif   # for GitHub code scanning
 architests validate
 architests waivers list --stale
 ```
@@ -112,6 +114,15 @@ Exit codes are part of the contract: `0` clean, `1` findings, `2` a malformed co
 - [Command line](docs/Cli.md) — validate, capture the API, review waivers and render the graph.
 - [The policy schema](architecture-policy.schema.json) — the published JSON Schema.
 
+## Contributing and security
+
+- [Contributing](CONTRIBUTING.md) — how to get set up, and what a pull request needs.
+- [Security policy](SECURITY.md) — how to report a vulnerability privately, and the design
+  commitments the package maintains (metadata-only assembly reading, no network, no process
+  launch, no regex).
+- [Changelog](CHANGELOG.md) — what changed, and what it means for a consumer.
+- [Code of conduct](CODE_OF_CONDUCT.md)
+
 ## Sample
 
 [`src/samples/ArchitectureSample`](src/samples/ArchitectureSample/README.md) is a small, fully
@@ -128,6 +139,8 @@ dotnet test src/samples/ArchitectureSample/tests/Sample.ArchitectureTests/Sample
   evaluator, and the TUnit base class.
 - `src/src/Architecture.CLI` — the `architests` dotnet tool.
 - `src/tests/ArchitectureTesting.UnitTests` — rule tests against in-memory and fixture graphs.
+- `src/tests/ArchitectureTesting.AcceptanceTests` — BDTest Given/When/Then scenarios, pairing a
+  happy and an unhappy path for each rule they cover.
 - `src/tests/ArchitectureTesting.CLI.UnitTests` — the tool's parser and commands.
 - `src/tests/Repository.UnitTests` — the skill self-tests, the rule/documentation drift test, and the
   package applied to this repository.

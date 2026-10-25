@@ -1,0 +1,63 @@
+name: Bug report
+description: A rule reports something it should not, or misses something it should catch.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For a security issue, do not use this form — see
+        [SECURITY.md](https://github.com/purview-dev/architests/blob/main/SECURITY.md).
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: "1.2.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem is it?
+      options:
+        - A rule reports a violation that is not real (false positive)
+        - A rule misses a violation it should catch (false negative)
+        - The tool or test run crashes
+        - The policy is rejected or misread
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: policy
+    attributes:
+      label: The policy
+      description: The relevant part of `.config/architecture-policy.json`.
+      render: json
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened
+      description: The failure message or stack trace, verbatim.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: shape
+    attributes:
+      label: Repository shape
+      description: >
+        The projects and the code involved. A false positive usually depends on something specific
+        about a declaration, so the smallest snippet that reproduces it is the most useful thing
+        you can provide.

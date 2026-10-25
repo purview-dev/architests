@@ -4,6 +4,33 @@
 		<ExcludePurviewTelemetry>true</ExcludePurviewTelemetry>
 	</PropertyGroup>
 
+	<PropertyGroup Label="Build quality gates">
+		<!--
+			The SDK only defaults TreatWarningsAsErrors for Roslyn components, and this repository
+			ships none. Without it the many warning-severity CA security rules the managed
+			.editorconfig configures (CA3001, CA3003, CA3075, the CA53xx and CA54xx families) are
+			reported and then ignored, which is the same as not configuring them.
+		-->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+		<!--
+			The built-in NuGet vulnerability audit, escalated. Left at its defaults it warns about
+			direct dependencies only, at moderate severity and above, and a warning nobody fails on
+			is a warning nobody reads. `all` includes transitive packages, which is where a
+			vulnerability in a library like this one is most likely to arrive.
+		-->
+		<NuGetAudit>true</NuGetAudit>
+		<NuGetAuditMode>all</NuGetAuditMode>
+		<NuGetAuditLevel>low</NuGetAuditLevel>
+
+		<!--
+			Restore is reproducible and tamper-evident only with a committed lock file. CI should
+			additionally restore in locked mode, so a drifted graph fails rather than resolving
+			silently.
+		-->
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	</PropertyGroup>
+
 	<Import Sdk="Purview.BuildSdk" Project="Sdk.props" />
 
 	<PropertyGroup Label="Purview site URL metadata">
@@ -29,6 +56,15 @@
 			beside its csproj so the package carries the package-specific guidance.
 		-->
 	</PropertyGroup>
+
+	<!--
+		Coverage collection for every test project, so adding one cannot silently shrink the
+		measured surface. Matched on the project name because the SDK's own test detection runs
+		later than this file.
+	-->
+	<ItemGroup Label="Test coverage" Condition="$(MSBuildProjectName.EndsWith('Tests'))">
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+	</ItemGroup>
 
 	<ItemGroup Label="NuGet package assets" Condition="'$(IsPackable)' == 'true'">
 		<None

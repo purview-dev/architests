@@ -27,13 +27,15 @@ public sealed class ArchitectureTests : PurviewArchitectureTests
 
 ## What the context gives you
 
-`ArchitectureContext` carries the three inputs a rule can need:
+`ArchitectureContext` carries the five inputs a rule can need:
 
 | Member | What it is |
 | -- | -- |
 | `Policy` | The parsed `ArchitecturePolicy`, so a rule reads the same definition the built-in rules do. |
 | `Projects` | The project graph, keyed by project name, with declared references, packages, framework references and analyzers. |
 | `Assemblies` | The compiled assemblies, keyed by project name, each with the external types it references. Empty when `assemblyRules.enabled` is false. |
+| `APISurfaces` | The declared types of each compiled assembly, keyed by project name — kinds, members, attributes and interfaces. Empty when `typeRules`, `apiRules` and `portRules` are all off. |
+| `Baseline` | The committed API baseline, or `null` when there is none or `apiRules` is off. |
 
 ## What you get for free
 

@@ -1,0 +1,61 @@
+name: Architecture
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: architecture-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Architecture policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      # Uploading the SARIF so violations appear as annotations on the pull request.
+      security-events: write
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          global-json-file: global.json
+
+      # The type-level, API and port rules read compiled assemblies, so the build is not optional.
+      - name: Build
+        run: dotnet build src/ArchitectureTesting.slnx --configuration Release
+
+      # The tool built from this commit, not a published one: a change to a rule has to be judged
+      # by the rule as it now stands, or the check lags the code it is meant to govern.
+      - name: Check the architecture policy
+        id: check
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          dotnet run --project src/src/Architecture.CLI/Architecture.CLI.csproj --configuration Release --no-build -- \
+            check --format sarif --repository . > architests.sarif
+
+      # Runs even when the check failed, which is exactly when there is something to upload.
+      - name: Upload the findings
+        if: always() && hashFiles('architests.sarif') != ''
+        uses: github/codeql-action/upload-sarif@793b778da9c9275a0f276522b27cb5fc14bba279 # v4
+        with:
+          sarif_file: architests.sarif
+          category: architests
+
+      - name: Fail when the policy was broken
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "::error title=Architecture policy::The repository does not respect its architecture policy. See the Code scanning results, or the step output above."
+          exit 1

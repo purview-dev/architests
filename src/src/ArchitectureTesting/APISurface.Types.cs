@@ -28,7 +28,7 @@ public static partial class APISurface
 
 		return new APIType(
 			projectName,
-			type.Namespace.IsNil ? string.Empty : reader.GetString(type.Namespace),
+			NamespaceOf(reader, type),
 			APISignatureProvider.TrimArity(name),
 			MetadataNames.Definition(reader, handle),
 			KindOf(attributes, baseType),
@@ -41,6 +41,28 @@ public static partial class APISurface
 			ReadMembers(reader, type),
 			ReadAttributes(reader, type.GetCustomAttributes())
 		);
+	}
+
+	/// <summary>Resolves a type's namespace, following a nested type up to its outermost declaration.</summary>
+	/// <param name="reader">The assembly's metadata.</param>
+	/// <param name="type">The type definition.</param>
+	/// <returns>The namespace, or empty for a type declared outside one.</returns>
+	/// <remarks>
+	/// Metadata stores no namespace on a nested type; it belongs to the type that declares it. Read
+	/// directly, every public nested type looks like it lives in the global namespace, which the
+	/// namespace rule then reports as being outside its project's root.
+	/// </remarks>
+	static string NamespaceOf(MetadataReader reader, TypeDefinition type)
+	{
+		var declaring = type.GetDeclaringType();
+
+		while (!declaring.IsNil)
+		{
+			type = reader.GetTypeDefinition(declaring);
+			declaring = type.GetDeclaringType();
+		}
+
+		return type.Namespace.IsNil ? string.Empty : reader.GetString(type.Namespace);
 	}
 
 	/// <summary>Classifies a type from its flags and base type.</summary>

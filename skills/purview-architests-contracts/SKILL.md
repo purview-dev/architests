@@ -17,7 +17,7 @@ assemblies by metadata only and are off by default, because they need a build.
 | -- | -- | -- |
 | `apiSurface` | `apiRules` | The public API differs from the committed baseline |
 | `apiDocumentation` | `apiRules` | A public type or member has no XML documentation |
-| `portImplementation` | `portRules` | A port in an inner layer has no public implementation |
+| `portImplementation` | `portRules` | A port in an inner layer has no implementation |
 | `portPurity` | `portRules` | A port's signature names an infrastructure technology |
 
 ```json
@@ -93,9 +93,13 @@ not a port by this definition.
 
 ### `portImplementation`
 
-Every port must have at least one **public implementation** in a production project. An unimplemented
+Every port must have at least one **implementation** in a production project. An unimplemented
 port is either dead or a boundary nobody crossed; both deserve a review. The dependency matrix still
 governs where that implementation may live.
+
+An `internal` adapter counts: visibility does not change whether the boundary was crossed, and an
+adapter the composition root wires is commonly `internal`. Set
+`portRules.requirePublicImplementation` to `true` to require a public one.
 
 A port implemented only by a consumer (an extension point such as `IArchitectureRule`) fits badly
 here: either move it out of the port categories, or record a waiver explaining that the repository

@@ -105,13 +105,20 @@ longer permitted path still defeats the prohibition.
 
 ```bash
 dotnet tool install --global Purview.Architecture.Testing.Cli
+architests check                  # every rule, as the test suite would
 architests validate
 architests waivers list --stale
 ```
 
-`validate` runs the schema check and `policyIntegrity`; it needs no build. Exit codes are `0` clean,
-`1` findings, `2` a malformed command line. Both commands accept `--repository <path>`; without it
-the tool walks up from the current directory and stops at the repository boundary.
+`check` runs the whole rule set and needs a build, because the type-level, API and port rules read
+compiled assemblies. Use it where there is no test project, or in a pipeline step that should fail
+before the tests. `--format sarif` emits SARIF 2.1.0 with the rule descriptions attached and each
+finding pointed at its `.csproj`, which is what GitHub code scanning reads.
+
+`validate` runs the schema check and `policyIntegrity` only; it needs no build, so it suits a
+pre-commit hook. Exit codes are `0` clean, `1` findings, `2` a malformed command line. Every
+command accepts `--repository <path>`; without it the tool walks up from the current directory and
+stops at the repository boundary.
 
 `graphDiscovery` runs before the rules it protects. If `sourceRoots` is wrong, discovery finds
 nothing and every other rule passes vacuously — that is what this rule exists to stop.

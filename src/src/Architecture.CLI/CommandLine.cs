@@ -28,6 +28,7 @@ public static class CommandLine
 		  architests <command> [options]
 
 		Commands:
+		  check           Run every rule against the repository.
 		  validate        Validate the policy against its schema and its own integrity rules.
 		  api capture     Write the API baseline from the compiled assemblies.
 		  api check       Compare the compiled assemblies with the baseline.
@@ -71,6 +72,9 @@ public static class CommandLine
 			case "version":
 				output.WriteLine(Version);
 				return Success;
+
+			case "check":
+				return CheckCommand.Run([.. args.Skip(1)], output, error);
 
 			case "validate":
 				return ValidateCommand.Run([.. args.Skip(1)], output, error);

@@ -6,4 +6,7 @@ pre-commit:
 commit-msg:
   jobs:
     - name: conventional commits
+      # bunx resolves node_modules/.bin first, so this runs the version pinned in package.json
+      # and locked in bun.lock rather than fetching whatever is latest on npm at commit time.
+      # Run `bun install` once after cloning.
       run: bunx commitlint --edit {1}

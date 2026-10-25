@@ -53,6 +53,32 @@ public sealed class TypeNamespaceRuleTests
 		await Assert.That(violations).IsEmpty();
 	}
 
+	/// <summary>
+	/// A C# extension block emits a container whose metadata name begins with '&lt;', carrying no
+	/// attributes and no namespace. Reporting it asks an author to move a type that does not exist
+	/// in their source.
+	/// </summary>
+	[Test]
+	public async Task TypeNamespace_GivenACompilerSynthesizedContainer_ReportsNothing()
+	{
+		// Arrange
+		var evaluator = TypeRuleFixture.Evaluator(
+			TypeRuleFixture.Rules,
+			TypeRuleFixture.Type(
+				"<G>$7A6AE160A7649B5FD624AE28A23FFA64",
+				ns: string.Empty,
+				fullName: "Ext.<G>$7A6AE160A7649B5FD624AE28A23FFA64`1",
+				isNested: true
+			)
+		);
+
+		// Act
+		var violations = evaluator.TypeNamespace();
+
+		// Assert
+		await Assert.That(violations).IsEmpty();
+	}
+
 	[Test]
 	public async Task TypeNamespace_GivenAPrefixThatOnlyLooksSimilar_ReportsIt()
 	{

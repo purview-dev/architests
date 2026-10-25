@@ -18,18 +18,20 @@ static class TypeRuleFixture
 		IReadOnlyList<APIMember>? members = null,
 		IReadOnlyList<APIAttribute>? attributes = null,
 		string project = "Core",
-		IReadOnlyList<string>? interfaces = null
+		IReadOnlyList<string>? interfaces = null,
+		string? fullName = null,
+		bool isNested = false
 	) =>
 		new(
 			project,
 			ns,
 			name,
-			$"{ns}.{name}",
+			fullName ?? (ns.Length == 0 ? name : $"{ns}.{name}"),
 			kind,
 			isPublic,
 			isAbstract,
 			isSealed,
-			false,
+			isNested,
 			baseType,
 			interfaces ?? [],
 			members ?? [],
@@ -42,8 +44,15 @@ static class TypeRuleFixture
 		APIMemberKind kind = APIMemberKind.Method,
 		string typeName = "System.Void",
 		bool isStatic = false,
-		IReadOnlyList<APIAttribute>? attributes = null
-	) => new(name, kind, typeName, isStatic, attributes ?? []);
+		IReadOnlyList<APIAttribute>? attributes = null,
+		IReadOnlyList<string>? parameters = null,
+		int genericArity = 0
+	) =>
+		new(name, kind, typeName, isStatic, attributes ?? [])
+		{
+			Parameters = parameters ?? [],
+			GenericArity = genericArity,
+		};
 
 	/// <summary>Builds an evaluator over one governed project.</summary>
 	public static ArchitecturePolicyEvaluator Evaluator(TypeRules rules, params APIType[] types)

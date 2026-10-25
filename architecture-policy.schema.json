@@ -214,6 +214,11 @@
           "uniqueItems": true,
           "default": ["domain", "application"]
         },
+        "requirePublicImplementation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Require a port's implementation to be public. Off by default: an adapter the composition root wires is commonly internal, and the rule asks whether the boundary was crossed, not who can see the type that crosses it."
+        },
         "forbiddenTypePrefixes": {
           "type": "array",
           "description": "Type prefixes a port must not expose, such as a database provider or an HTTP client.",

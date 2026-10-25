@@ -137,9 +137,14 @@ The same reader exposes each assembly's declarations, so the public surface can 
 | `typeNamespace` | A public type outside the project's `RootNamespace` |
 | `attributePolicy` | A missing or forbidden attribute, `[Obsolete]` without a message, `InternalsVisibleTo` naming production code |
 
-It is **off by default** because it needs a build. Only public types are checked; generated code is
-skipped, and `appliesTo.categories` narrows the responsibility scope. Each enabled rule is its own
-test, and a disabled group produces no test rather than one that checks nothing.
+It is **off by default** because it needs a build. Only public types are checked, and
+`appliesTo.categories` narrows the responsibility scope. Each enabled rule is its own test, and a
+disabled group produces no test rather than one that checks nothing.
+
+`excludeGeneratedCode` skips a type that is **attribute-marked** (`[GeneratedCode]` or
+`[CompilerGenerated]`) **or compiler-synthesized** (a metadata name beginning with `<`). Both
+clauses are needed: the container a C# extension block emits carries no attributes at all, and
+reporting it would ask an author to seal or move a type that is not in their source.
 
 ## API and port rules
 
@@ -161,8 +166,10 @@ architests api check
 ```
 
 `portRules` treats interfaces in the `domain` and `application` categories as ports:
-`portImplementation` requires each one to have a public implementation, and `portPurity` rejects a
-signature that names an infrastructure technology such as `Microsoft.EntityFrameworkCore`.
+`portImplementation` requires each one to have an implementation, and `portPurity` rejects a
+signature that names an infrastructure technology such as `Microsoft.EntityFrameworkCore`. An
+`internal` adapter counts — the rule asks whether the boundary was crossed, not who can see the
+type that crosses it. Set `portRules.requirePublicImplementation` to demand a public one.
 
 Both groups are off by default and need a build. See the
 [policy reference](https://github.com/purview-dev/architests/blob/main/docs/Policy-Reference.md#api-rules).

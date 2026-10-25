@@ -74,3 +74,19 @@ They share `assemblyRules.assemblyRoots` and `assemblyGlobs`, and are configured
 definition tables, never loading the assembly. A public type's file path is not in metadata, so
 `typeNamespace` compares the declared namespace with `RootNamespace` and makes no claim about
 folders.
+
+### What these rules do not govern
+
+`excludeGeneratedCode` — on by default — skips a type that is **attribute-marked**
+(`[GeneratedCode]` or `[CompilerGenerated]`) **or compiler-synthesized** (a metadata name beginning
+with `<`, which is reserved for the compiler).
+
+Both clauses are needed. A C# extension block emits a container named `<G>$<hash>` carrying no
+attributes at all, so the attribute check alone would let it through — and it then trips `typeShape`
+as a utility class that forgot to be `static` and `typeNamespace` as a type in the empty namespace.
+Neither is actionable: the type is not in anyone's source. The same holds for lambda display
+classes, iterator and async state machines, and `<PrivateImplementationDetails>`.
+
+A public **nested** type is governed, and takes its namespace from the type that declares it.
+Metadata records no namespace on a nested type, so reading it directly would make every public
+nested type look like it lives outside its project's root namespace.

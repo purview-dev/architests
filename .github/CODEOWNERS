@@ -1,0 +1,16 @@
+# Review routing. The last matching pattern wins.
+*                                   @kieronlanning
+
+# The published contract. A change here changes what every consuming repository validates
+# against, so it is never an incidental edit.
+/architecture-policy.schema.json    @kieronlanning
+/.config/api-surface.json           @kieronlanning
+
+# The supply chain: anything that decides what CI executes, or with which credentials.
+/.github/                           @kieronlanning
+/nuget.config                       @kieronlanning
+/global.json                        @kieronlanning
+/Directory.Packages.props           @kieronlanning
+/src/Directory.Build.props          @kieronlanning
+/src/Directory.Build.targets        @kieronlanning
+/SECURITY.md                        @kieronlanning

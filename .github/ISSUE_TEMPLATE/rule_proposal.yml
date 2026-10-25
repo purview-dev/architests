@@ -1,0 +1,60 @@
+name: Rule proposal
+description: Propose a new architecture rule, or a change to an existing one.
+labels: [rule]
+body:
+  - type: input
+    id: id
+    attributes:
+      label: Proposed rule id
+      placeholder: "sliceCycle"
+    validations:
+      required: true
+
+  - type: textarea
+    id: catches
+    attributes:
+      label: What it catches
+      description: One sentence, in the style of the rule catalogue in the README.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it is worth failing a build over
+      description: >
+        A rule that fires on something nobody would change is noise, and noise is how a suite stops
+        being read. What goes wrong in a real repository if this is not enforced?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source
+    attributes:
+      label: What would it read?
+      options:
+        - The policy
+        - The project graph (csproj references and packages)
+        - The compiled assemblies (metadata only)
+    validations:
+      required: true
+
+  - type: textarea
+    id: unhappy
+    attributes:
+      label: The unhappy path
+      description: >
+        A case the rule must still catch. Every rule needs a happy and an unhappy path, so a
+        proposal that only describes what it ignores is incomplete.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: It can be evaluated from an in-memory fixture, not a repository on disk.
+          required: true
+        - label: It could be enabled in this repository's own policy, and this repository would pass.
+          required: true

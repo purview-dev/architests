@@ -8,11 +8,27 @@
 		<PackageVersion Include="JsonSchema.Net" Version="$(JsonSchemaVersion)" />
 	</ItemGroup>
 	<ItemGroup Label="Testing">
+		<!--
+			Coverage for the Microsoft.Testing.Platform runner the suite already uses, so no second
+			test host is involved. Referenced from src/Directory.Build.props for every *Tests
+			project rather than listed per project, because a test project added later without it
+			would quietly shrink the measured surface.
+
+			Not a GlobalPackageReference: that excludes compile assets, and the runner's generated
+			SelfRegisteredExtensions.cs needs the type at compile time.
+		-->
+		<PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
 		<PackageVersion Include="TUnit" Version="$(TUnitVersion)" />
 		<PackageVersion Include="TUnit.Core" Version="$(TUnitVersion)" />
 		<PackageVersion Include="TUnit.Assertions" Version="$(TUnitVersion)" />
 		<PackageVersion Include="TUnit.Mocks" Version="$(TUnitVersion)" />
 		<PackageVersion Include="Bogus" Version="35.6.5" />
-		<PackageVersion Include="Purview.Skills.Testing" Version="1.1.0" />
+		<!--
+			BDTest renders a rule's behaviour as Given/When/Then, so a policy's happy and unhappy
+			paths read as prose. Its TUnit adapter runs on the same Microsoft.Testing.Platform
+			runner the rest of the suite uses.
+		-->
+		<PackageVersion Include="BDTest.TUnit" Version="3.0.0" />
+		<PackageVersion Include="Purview.Skills.Testing" Version="1.2.0" />
 	</ItemGroup>
 </Project>

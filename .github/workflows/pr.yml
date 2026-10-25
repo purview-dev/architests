@@ -4,6 +4,11 @@ on:
   pull_request:
     branches: [main]
 
+# The build job reads the repository and nothing else. No secrets are forwarded: a pull request
+# from a fork must not be able to reach a publishing credential.
+permissions:
+  contents: read
+
 concurrency:
   group: pr-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -11,10 +16,14 @@ concurrency:
 jobs:
   build:
     name: Build and test
-    uses: purview-dev/build/.github/workflows/purview-build.yml@main
+    # Pinned to a commit, not @main: a reusable workflow runs with this repository's secrets and
+    # token, so a moving ref is a moving trust boundary. Bump deliberately, with the diff reviewed.
+    uses: purview-dev/build/.github/workflows/purview-build.yml@f2c2d7dd8a80e0d0a084a292fdb87865c6857126 # main @ 2026-10-25
     with:
       # Keep in sync with `sdk.version` in global.json.
       dotnet-version: "11.0.100-rc.2.26504.105"
+      # Pinned so CI runs the same tool as `.config/dotnet-tools.json`. Left empty, the shared
+      # workflow installs whatever is latest on nuget.org at job time and executes it.
+      build-version: "0.8.0"
       run-pack: true
       validate-pack: true
-    secrets: inherit

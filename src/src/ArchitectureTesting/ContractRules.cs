@@ -47,6 +47,19 @@ public sealed class PortRules
 	public IReadOnlyList<string> Categories { get; init; } = ["domain", "application"];
 
 	/// <summary>
+	/// Whether a port's implementation must be public. Off by default, because an adapter the
+	/// composition root wires is commonly <c>internal</c>, and keeping it so is good practice rather
+	/// than a departure.
+	/// </summary>
+	/// <remarks>
+	/// The rule exists to catch a contract nobody implements. Visibility does not change whether the
+	/// boundary was crossed, so it is only checked when a repository asks for it - a repository that
+	/// ships its adapters as public API and wants that enforced sets this to true.
+	/// </remarks>
+	[JsonPropertyName("requirePublicImplementation")]
+	public bool RequirePublicImplementation { get; init; }
+
+	/// <summary>
 	/// Type prefixes a port must not expose. Defaults to common infrastructure technologies, because
 	/// a port that names a database or an HTTP client is not a boundary, it is a leak.
 	/// </summary>

@@ -55,7 +55,9 @@ public static class AssemblyGraph
 		var roots =
 			rules.AssemblyRoots.Count == 0
 				? [AppContext.BaseDirectory]
-				: rules.AssemblyRoots.Select(root => Path.Combine(repositoryRoot, root));
+				: rules.AssemblyRoots.Select(root =>
+					PolicyPath.Resolve(repositoryRoot, root, "assemblyRules.assemblyRoots")
+				);
 
 		var globs = rules.AssemblyGlobs.Count == 0 ? ["*.dll"] : rules.AssemblyGlobs;
 
@@ -67,15 +69,76 @@ public static class AssemblyGraph
 
 			foreach (var glob in globs)
 			{
-				paths.AddRange(
-					Directory
-						.EnumerateFiles(root, glob, SearchOption.AllDirectories)
-						.Where(path => !IsIntermediate(path))
-				);
+				foreach (var path in Enumerate(root, glob))
+				{
+					if (IsIntermediate(path))
+						continue;
+
+					paths.Add(path);
+
+					// A root the policy chose is walked recursively, so a mistake - or a deliberately
+					// hostile value - can enumerate an unbounded tree. The cap turns that into a
+					// readable failure rather than a build that never finishes.
+					if (paths.Count > MaximumAssemblies)
+					{
+						throw new InvalidOperationException(
+							$"More than {MaximumAssemblies} assemblies matched '{glob}' under '{root}'. "
+								+ "Narrow assemblyRules.assemblyRoots or assemblyGlobs: scanning this many files is "
+								+ "never intended and usually means a root points above the build output."
+						);
+					}
+				}
 			}
 		}
 
 		return paths.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+	}
+
+	/// <summary>The most assemblies a scan will read before reporting the scan itself as the fault.</summary>
+	const int MaximumAssemblies = 20_000;
+
+	/// <summary>Enumerates one glob, reporting a pattern the policy should not contain.</summary>
+	/// <param name="root">The directory to search, already confined to the repository.</param>
+	/// <param name="glob">The search pattern from the policy.</param>
+	/// <returns>The matching file paths.</returns>
+	/// <remarks>
+	/// The glob is a <b>file-name</b> pattern, not a path, and is validated as one. That is not
+	/// pedantry: <see cref="Directory.EnumerateFiles(string, string, SearchOption)"/> accepts a
+	/// relative path in the pattern, so <c>"../*.dll"</c> enumerates the parent directory and walks
+	/// straight out of the root that was just confined to the repository. Containing the root and
+	/// not the pattern would leave the hole open.
+	/// <para>
+	/// A pattern the platform rejects outright raises <see cref="ArgumentException"/> or
+	/// <see cref="IOException"/> depending on which part of it is wrong; both are reported against
+	/// the policy rather than left as a stack trace that never mentions it.
+	/// </para>
+	/// </remarks>
+	static IEnumerable<string> Enumerate(string root, string glob)
+	{
+		if (
+			glob.Contains('/', StringComparison.Ordinal)
+			|| glob.Contains('\\', StringComparison.Ordinal)
+			|| glob.Contains("..", StringComparison.Ordinal)
+		)
+		{
+			throw new InvalidOperationException(
+				$"'{glob}' is not a valid value for assemblyRules.assemblyGlobs. A glob matches a file name, "
+					+ "such as '*.dll', and may not contain a path separator or '..'. Use assemblyRoots to choose "
+					+ "which directories are scanned."
+			);
+		}
+
+		try
+		{
+			return Directory.EnumerateFiles(root, glob, SearchOption.AllDirectories);
+		}
+		catch (Exception exception) when (exception is ArgumentException or IOException)
+		{
+			throw new InvalidOperationException(
+				$"'{glob}' is not a valid value for assemblyRules.assemblyGlobs: {exception.Message}",
+				exception
+			);
+		}
 	}
 
 	/// <summary>Reads the assemblies and resolves each to its project.</summary>
@@ -219,23 +282,36 @@ public static class AssemblyGraph
 	/// <param name="reader">The assembly's metadata.</param>
 	/// <param name="scope">The scope handle, which may be a nested type reference.</param>
 	/// <returns>The defining assembly's simple name, or <see langword="null"/> for the same module.</returns>
+	/// <remarks>
+	/// Bounded. The walk follows a chain the file itself defines, and nothing in the PE format
+	/// prevents that chain from pointing back at itself: a corrupt or hand-crafted assembly whose
+	/// type reference resolves to its own scope would otherwise spin here forever. The input is
+	/// every <c>*.dll</c> under a policy-chosen root, so it is not necessarily well-formed.
+	/// <para>
+	/// The depth is the nesting depth of a type reference. Real metadata reaches single figures;
+	/// anything near the limit is already pathological, so the limit is simply treated as "not a
+	/// resolvable scope" rather than reported.
+	/// </para>
+	/// </remarks>
 	static string? ResolveScopeAssembly(MetadataReader reader, EntityHandle scope)
 	{
-		while (true)
+		for (var depth = 0; depth < MaximumNestingDepth; depth++)
 		{
 			if (scope.Kind == HandleKind.AssemblyReference)
 				return reader.GetString(reader.GetAssemblyReference((AssemblyReferenceHandle)scope).Name);
 
-			if (scope.Kind == HandleKind.TypeReference)
-			{
-				// A nested type's scope is its declaring type reference.
-				scope = reader.GetTypeReference((TypeReferenceHandle)scope).ResolutionScope;
-				continue;
-			}
+			if (scope.Kind != HandleKind.TypeReference)
+				return null;
 
-			return null;
+			// A nested type's scope is its declaring type reference.
+			scope = reader.GetTypeReference((TypeReferenceHandle)scope).ResolutionScope;
 		}
+
+		return null;
 	}
+
+	/// <summary>The deepest type-reference nesting chain the reader will follow.</summary>
+	const int MaximumNestingDepth = 64;
 
 	/// <summary>Reports whether a path is intermediate build output.</summary>
 	/// <param name="path">The path to test.</param>

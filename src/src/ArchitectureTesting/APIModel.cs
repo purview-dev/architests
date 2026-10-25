@@ -72,6 +72,13 @@ public sealed record APIMember(
 {
 	/// <summary>The parameter types, in order. Empty for a field, property or event.</summary>
 	public IReadOnlyList<string> Parameters { get; init; } = [];
+
+	/// <summary>The number of generic parameters the member declares. Zero for a non-generic member.</summary>
+	/// <remarks>
+	/// Arity is part of a member's identity: <c>M&lt;T&gt;(X)</c> and <c>M(X)</c> are distinct overloads
+	/// that share a name and a parameter list, so a key that omits arity collides on them.
+	/// </remarks>
+	public int GenericArity { get; init; }
 }
 
 /// <summary>A compiled assembly's declaration surface and assembly-level attributes.</summary>
@@ -124,12 +131,33 @@ public sealed record APIType(
 	public bool IsStatic => Kind == APITypeKind.Class && IsAbstract && IsSealed;
 
 	/// <summary>When true the compiler or a tool marked the type as generated.</summary>
+	/// <remarks>
+	/// Attribute-marked generation only. A compiler-synthesized type is often unmarked, so
+	/// <see cref="IsCompilerSynthesized"/> answers the other half.
+	/// </remarks>
 	public bool IsGeneratedCode =>
 		Attributes.Any(attribute =>
 			attribute.TypeName
 				is "System.CodeDom.Compiler.GeneratedCodeAttribute"
 					or "System.Runtime.CompilerServices.CompilerGeneratedAttribute"
 		);
+
+	/// <summary>When true the compiler synthesized the type and no source declares it.</summary>
+	/// <remarks>
+	/// A metadata name beginning with <c>&lt;</c> is reserved for the compiler, because the character
+	/// is not legal in a C# identifier. It covers the <c>&lt;G&gt;$…</c> and <c>&lt;M&gt;$…</c>
+	/// containers an extension block emits, lambda display classes, iterator and async state
+	/// machines, and <c>&lt;PrivateImplementationDetails&gt;</c>. None of these carry
+	/// <c>[CompilerGenerated]</c> reliably - the extension containers carry no attributes at all - so
+	/// the name is the only signal, and a rule that reports one asks an author to change something
+	/// that does not exist in their source.
+	/// </remarks>
+	public bool IsCompilerSynthesized => IsReservedName(Name) || FullName.Split('.').Any(IsReservedName);
+
+	/// <summary>Reports whether a metadata name uses the compiler's reserved form.</summary>
+	/// <param name="name">The metadata name.</param>
+	/// <returns><see langword="true"/> when the name begins with <c>&lt;</c>.</returns>
+	static bool IsReservedName(string name) => name.Length > 0 && name[0] == '<';
 
 	/// <summary>When true the type is an attribute class.</summary>
 	public bool IsAttribute => string.Equals(BaseType, "System.Attribute", StringComparison.Ordinal);

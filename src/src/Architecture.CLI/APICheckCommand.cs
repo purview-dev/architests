@@ -8,7 +8,7 @@ static class APICheckCommand
 {
 	/// <summary>The command's usage text.</summary>
 	public const string Usage =
-		"Usage: architests api check [--repository <path>] [--baseline <path>] [--format text|json]";
+		"Usage: architests api check [--repository <path>] [--baseline <path>] [--format text|json|sarif]";
 
 	static readonly JsonSerializerOptions JsonOptions = new()
 	{
@@ -87,7 +87,7 @@ static class APICheckCommand
 				break;
 
 			case "sarif":
-				output.WriteLine(RenderSarif(changes, context.Root, path));
+				output.WriteLine(SarifReport.Render(changes, context.Root, path));
 				break;
 
 			default:
@@ -101,58 +101,5 @@ static class APICheckCommand
 		);
 
 		return CommandLine.Findings;
-	}
-
-	/// <summary>Renders the differences as a SARIF 2.1.0 document.</summary>
-	/// <param name="changes">The differences.</param>
-	/// <param name="root">The repository root, used for the artifact URI.</param>
-	/// <param name="baselinePath">The baseline path.</param>
-	/// <returns>The SARIF document.</returns>
-	static string RenderSarif(IReadOnlyList<APIBaselineChange> changes, string root, string baselinePath)
-	{
-		var uri = Path.GetRelativePath(root, baselinePath).Replace('\\', '/');
-
-		var results = changes
-			.Select(change => new Dictionary<string, object?>
-			{
-				["ruleId"] = ArchitectureRules.APISurface,
-				["level"] = change.Kind == APIBaselineChangeKind.Removed ? "error" : "warning",
-				["message"] = new Dictionary<string, object?> { ["text"] = change.Detail },
-				["locations"] = new[]
-				{
-					new Dictionary<string, object?>
-					{
-						["physicalLocation"] = new Dictionary<string, object?>
-						{
-							["artifactLocation"] = new Dictionary<string, object?> { ["uri"] = uri },
-						},
-					},
-				},
-			})
-			.ToArray();
-
-		Dictionary<string, object?> document = new()
-		{
-			["$schema"] = "https://json.schemastore.org/sarif-2.1.0.json",
-			["version"] = "2.1.0",
-			["runs"] = new[]
-			{
-				new Dictionary<string, object?>
-				{
-					["tool"] = new Dictionary<string, object?>
-					{
-						["driver"] = new Dictionary<string, object?>
-						{
-							["name"] = "architests",
-							["version"] = CommandLine.Version,
-							["informationUri"] = "https://github.com/purview-dev/architests",
-						},
-					},
-					["results"] = results,
-				},
-			},
-		};
-
-		return JsonSerializer.Serialize(document, JsonOptions);
 	}
 }

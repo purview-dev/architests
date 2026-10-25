@@ -13,6 +13,7 @@ dotnet tool install --global Purview.Architecture.Testing.Cli
 ## Commands
 
 ```text
+architests check [--format text|json|sarif]
 architests validate                     # schema + policyIntegrity
 architests api capture                  # write .config/api-surface.json
 architests api check [--format text|json|sarif]
@@ -25,6 +26,44 @@ architests --version
 Both commands accept `--repository <path>` (or `-r`) to name the repository root. Without it, the
 tool walks up from the current directory to the folder holding `.config/architecture-policy.json`,
 and stops at the repository boundary rather than reading a parent folder's policy.
+
+### `check`
+
+```bash
+architests check
+architests check --format sarif > architests.sarif
+```
+
+Runs **every rule** against the repository and reports what the test suite would. This is the
+command for a repository that has no test project, or for a pipeline step that should fail before
+the tests run.
+
+It needs a build, because the type-level, API and port rules read compiled assemblies. Rules whose
+policy group is off are skipped, exactly as they are under TUnit.
+
+| Format | What it is for |
+| -- | -- |
+| `text` | Reading in a terminal: one `ruleId: message` line per violation. |
+| `json` | Another tool. The violations as an array of `rule`, `project` and `message`. |
+| `sarif` | GitHub code scanning, an IDE, or a pull-request annotation. |
+
+The SARIF output carries each rule's title and description from the rule catalogue, and points a
+finding at the offending project's `.csproj`. There is no line number: the evaluator reads project
+references and compiled metadata, not source, so the project file is the most precise location it
+can honestly give.
+
+```yaml
+- name: Architecture
+  run: architests check --format sarif > architests.sarif
+  continue-on-error: true
+
+- uses: github/codeql-action/upload-sarif@v4
+  with:
+    sarif_file: architests.sarif
+```
+
+`continue-on-error` is deliberate there: the upload step should still run when the check fails,
+which is exactly when there is something to upload.
 
 ### `validate`
 

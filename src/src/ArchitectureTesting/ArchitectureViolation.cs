@@ -50,7 +50,7 @@ public static class ArchitectureRules
 	/// <summary>A public type or member has no XML documentation.</summary>
 	public const string APIDocumentation = "apiDocumentation";
 
-	/// <summary>A port has no public implementation in the repository.</summary>
+	/// <summary>A port has no implementation in the repository.</summary>
 	public const string PortImplementation = "portImplementation";
 
 	/// <summary>A port's signature exposes an infrastructure technology.</summary>
@@ -197,7 +197,7 @@ public static class ArchitectureRules
 		new(
 			PortImplementation,
 			"Port implementation",
-			"An interface in a port category has no public implementation in the repository.",
+			"An interface in a port category has no implementation in the repository.",
 			"assemblies",
 			Waivable: true,
 			Group: "portRules",

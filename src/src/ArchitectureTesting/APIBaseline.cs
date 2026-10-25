@@ -50,15 +50,25 @@ public sealed record APIBaseline(int Version, IReadOnlyList<APIBaselineProject> 
 			CurrentVersion,
 			[
 				.. assemblies
-					.Values.Where(assembly => assembly.Types.Any(type => type.IsPublic))
+					.Values.Where(assembly => assembly.Types.Any(InSurface))
 					.Select(assembly => new APIBaselineProject(
 						assembly.ProjectName,
 						policy.Classify(assembly.ProjectName)?.Name ?? string.Empty,
-						[.. assembly.Types.Where(type => type.IsPublic).Select(TypeEntry)]
+						[.. assembly.Types.Where(InSurface).Select(TypeEntry)]
 					)),
 			]
 		).Sorted();
 	}
+
+	/// <summary>Reports whether a type belongs in the committed contract.</summary>
+	/// <param name="type">The type.</param>
+	/// <returns><see langword="true"/> when the type is public and written by an author.</returns>
+	/// <remarks>
+	/// A compiler-synthesized container is public in metadata but is not API: nobody can name it,
+	/// and the hash in its name changes whenever the source around it changes. Recording it would
+	/// make the baseline churn on edits that alter no contract at all.
+	/// </remarks>
+	static bool InSurface(APIType type) => type.IsPublic && !type.IsCompilerSynthesized;
 
 	/// <summary>Reads a baseline file.</summary>
 	/// <param name="path">The baseline path.</param>
@@ -125,15 +135,15 @@ public sealed record APIBaseline(int Version, IReadOnlyList<APIBaselineProject> 
 											[
 												.. type.Interfaces.OrderBy(value => value, StringComparer.Ordinal),
 											],
+											// Ordered by the same identity the comparer keys on, so two
+											// overloads that differ only in arity or return type keep a
+											// stable, distinguishable order.
 											Members =
 											[
-												.. type
-													.Members.OrderBy(member => member.Kind, StringComparer.Ordinal)
-													.ThenBy(member => member.Name, StringComparer.Ordinal)
-													.ThenBy(
-														member => string.Join(",", member.Parameters),
-														StringComparer.Ordinal
-													),
+												.. type.Members.OrderBy(
+													member => member.Signature,
+													StringComparer.Ordinal
+												),
 											],
 										}
 									),
@@ -161,7 +171,10 @@ public sealed record APIBaseline(int Version, IReadOnlyList<APIBaselineProject> 
 					member.TypeName,
 					member.IsStatic,
 					[.. member.Parameters]
-				)),
+				)
+				{
+					GenericArity = member.GenericArity,
+				}),
 			]
 		);
 }

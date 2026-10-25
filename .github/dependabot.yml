@@ -1,0 +1,39 @@
+version: 2
+
+updates:
+  # Pinned action SHAs only stay current if something bumps them. Without this, pinning trades a
+  # moving trust boundary for a frozen, unpatched one.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "build"
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+    groups:
+      tunit:
+        patterns: ["TUnit", "TUnit.*"]
+      purview:
+        patterns: ["Purview.*"]
+      others:
+        patterns: ["*"]
+        exclude-patterns: ["TUnit", "TUnit.*", "Purview.*"]
+
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore"

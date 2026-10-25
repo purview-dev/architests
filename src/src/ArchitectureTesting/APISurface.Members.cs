@@ -44,6 +44,7 @@ public static partial class APISurface
 				)
 				{
 					Parameters = signature.ParameterTypes,
+					GenericArity = method.GetGenericParameters().Count,
 				}
 			);
 		}

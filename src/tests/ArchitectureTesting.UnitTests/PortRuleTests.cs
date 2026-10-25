@@ -81,7 +81,7 @@ public sealed class PortRuleTests
 		// Assert
 		await Assert.That(violations).HasSingleItem();
 		await Assert.That(violations[0].Rule).IsEqualTo(ArchitectureRules.PortImplementation);
-		await Assert.That(violations[0].Message).Contains("no public implementation");
+		await Assert.That(violations[0].Message).Contains("no implementation");
 	}
 
 	[Test]
@@ -95,6 +95,38 @@ public sealed class PortRuleTests
 
 		// Assert
 		await Assert.That(violations).IsEmpty();
+	}
+
+	/// <summary>
+	/// An adapter the composition root wires is commonly internal. The rule asks whether the
+	/// boundary was crossed, not who can see the type that crosses it.
+	/// </summary>
+	[Test]
+	public async Task PortImplementation_GivenAnInternalImplementation_ReportsNothing()
+	{
+		// Arrange
+		var evaluator = Evaluator(Enabled, [Port()], [Implementation with { IsPublic = false }]);
+
+		// Act
+		var violations = evaluator.PortImplementation();
+
+		// Assert
+		await Assert.That(violations).IsEmpty();
+	}
+
+	[Test]
+	public async Task PortImplementation_GivenAnInternalImplementationAndPublicRequired_ReportsIt()
+	{
+		// Arrange
+		PortRules ports = new() { Enabled = true, RequirePublicImplementation = true };
+		var evaluator = Evaluator(ports, [Port()], [Implementation with { IsPublic = false }]);
+
+		// Act
+		var violations = evaluator.PortImplementation();
+
+		// Assert
+		await Assert.That(violations).HasSingleItem();
+		await Assert.That(violations[0].Message).Contains("no public implementation");
 	}
 
 	[Test]
@@ -132,6 +164,55 @@ public sealed class PortRuleTests
 		await Assert.That(violations).HasSingleItem();
 		await Assert.That(violations[0].Rule).IsEqualTo(ArchitectureRules.PortPurity);
 		await Assert.That(violations[0].Message).Contains("Microsoft.EntityFrameworkCore");
+	}
+
+	/// <summary>
+	/// The setting is named and documented as a list of prefixes. A substring match also flagged a
+	/// type whose namespace merely contained the prefix part-way through.
+	/// </summary>
+	[Test]
+	public async Task PortPurity_GivenAPrefixAppearingMidNamespace_ReportsNothing()
+	{
+		// Arrange
+		// 'Contoso.System.DataPoint' is the repository's own type; it only looks like System.Data.
+		var evaluator = Evaluator(
+			Enabled,
+			[Port(TypeRuleFixture.Member("Reading", APIMemberKind.Property, "Contoso.System.DataPoint"))],
+			[Implementation]
+		);
+
+		// Act
+		var violations = evaluator.PortPurity();
+
+		// Assert
+		await Assert.That(violations).IsEmpty();
+	}
+
+	/// <summary>A technology hidden inside a generic argument is exposed just as plainly.</summary>
+	[Test]
+	public async Task PortPurity_GivenATechnologyInAGenericArgument_ReportsIt()
+	{
+		// Arrange
+		var evaluator = Evaluator(
+			Enabled,
+			[
+				Port(
+					TypeRuleFixture.Member(
+						"Connections",
+						APIMemberKind.Property,
+						"System.Collections.Generic.IReadOnlyList<System.Data.IDbConnection>"
+					)
+				),
+			],
+			[Implementation]
+		);
+
+		// Act
+		var violations = evaluator.PortPurity();
+
+		// Assert
+		await Assert.That(violations).HasSingleItem();
+		await Assert.That(violations[0].Message).Contains("System.Data");
 	}
 
 	[Test]

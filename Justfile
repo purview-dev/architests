@@ -86,6 +86,13 @@ test filter="/*/*/*/*/" *args:
     echo "Running tests for {{ BLUE }}{{ test_solution }}{{ NORMAL }} with {{ YELLOW }}{{ build_configuration }}{{ NORMAL }}..."
     dotnet test --solution "{{ test_solution }}" --configuration "{{ build_configuration }}" --treenode-filter={{ filter }} {{ args }}
 
+# Runs the tests and collects code coverage (Cobertura, one report per project under ./TestResults)
+# No --coverage-output: the projects run in parallel, so a shared filename makes them race.
+[group('Build and Test')]
+coverage filter="/*/*/*/*/" *args:
+    echo "Collecting coverage for {{ BLUE }}{{ test_solution }}{{ NORMAL }}..."
+    dotnet test --solution "{{ test_solution }}" --configuration "{{ build_configuration }}" --treenode-filter={{ filter }} -- --coverage --coverage-output-format cobertura {{ args }}
+
 # Cleans the solution with the specified configuration (default: Debug)
 [group('Build and Test')]
 clean *args:
@@ -98,6 +105,34 @@ pack *args:
     just build
     echo "Packing {{ BLUE }}{{ solution_file }}{{ NORMAL }} with {{ YELLOW }}{{ build_configuration }}{{ NORMAL }}..."
     dotnet pack "{{ solution_file }}" --configuration "{{ build_configuration }}" --no-restore --output "{{ artifact_folder }}" {{ args }}
+
+# -----------------------------------------------------------------------------
+# Security and dependencies
+# -----------------------------------------------------------------------------
+
+# Audit the restore graph for known vulnerabilities, including transitive packages
+[group('Security')]
+audit:
+    echo "Auditing {{ BLUE }}{{ solution_file }}{{ NORMAL }} for known vulnerabilities..."
+    dotnet list "{{ solution_file }}" package --vulnerable --include-transitive
+
+# List packages with a newer version available
+[group('Security')]
+outdated:
+    echo "Checking {{ BLUE }}{{ solution_file }}{{ NORMAL }} for outdated packages..."
+    dotnet list "{{ solution_file }}" package --outdated
+
+# Restore in locked mode, as CI does: fails if the lock files no longer match the project files
+[group('Security')]
+restore-locked:
+    echo "Restoring {{ BLUE }}{{ solution_file }}{{ NORMAL }} in locked mode..."
+    dotnet restore "{{ solution_file }}" --locked-mode
+
+# Regenerate the committed packages.lock.json files after a deliberate dependency change
+[group('Security')]
+relock:
+    echo "Regenerating lock files for {{ BLUE }}{{ solution_file }}{{ NORMAL }}..."
+    dotnet restore "{{ solution_file }}" --force-evaluate
 
 # -----------------------------------------------------------------------------
 # Formatting
@@ -142,9 +177,11 @@ code:
     code "{{ root_folder }}"
 
 # Clean up the repository by removing build artifacts, bin/obj folders etc, and shutting down the build server
+# Uses git rather than `find`, so it behaves the same on Windows, Linux and macOS.
+# -d directories, -x including ignored files, -f force; bin/ and obj/ are gitignored.
 [group('Utilities')]
 scrub:
-    find . -type d \( -name bin -o -name obj \) -exec rm -rf {} +
+    git clean -dxf -e .vs -- "**/bin" "**/obj"
     just clean
     just restore --force-evaluate
     dotnet build-server shutdown

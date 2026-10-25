@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<NamespacePrefix>Purview.Architecture</NamespacePrefix>
+		<AutoIncludeUsings>false</AutoIncludeUsings>
+		<RootNamespace>Purview.Architecture.Testing.AcceptanceTests</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../../src/ArchitectureTesting/ArchitectureTesting.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--
+			BDTest renders each rule as Given/When/Then, so a policy's happy and unhappy paths read
+			as prose rather than as assertions. Its TUnit adapter runs on the same
+			Microsoft.Testing.Platform runner as the rest of the suite.
+		-->
+		<PackageReference Include="BDTest.TUnit" />
+	</ItemGroup>
+</Project>

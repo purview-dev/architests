@@ -3,17 +3,25 @@ namespace Purview.Architecture.Testing;
 /// <summary>The port rules: implementation and technology purity.</summary>
 public sealed partial class ArchitecturePolicyEvaluator
 {
-	/// <summary>Ports with no public implementation in the repository.</summary>
+	/// <summary>Ports with no implementation in the repository.</summary>
 	/// <returns>The violations.</returns>
 	/// <remarks>
 	/// A port is an interface in one of <see cref="PortRules.Categories"/>: a contract the inner
 	/// layers own. An interface nobody implements is either dead or a boundary that was never
 	/// completed, so it is reported rather than left as decoration.
+	/// <para>
+	/// An <c>internal</c> adapter counts. The boundary is crossed whether or not a consumer outside
+	/// the assembly can see the type doing the crossing, and a composition root wiring an internal
+	/// implementation is the ordinary shape. Set
+	/// <see cref="PortRules.RequirePublicImplementation"/> to demand a public one.
+	/// </para>
 	/// </remarks>
 	public IReadOnlyList<ArchitectureViolation> PortImplementation()
 	{
 		if (!Policy.PortRules.Enabled)
 			return [];
+
+		var requirePublic = Policy.PortRules.RequirePublicImplementation;
 
 		List<ArchitectureViolation> violations = [];
 
@@ -23,7 +31,7 @@ public sealed partial class ArchitecturePolicyEvaluator
 				.Values.Where(assembly => IsProductionProject(assembly.ProjectName))
 				.SelectMany(assembly => assembly.Types)
 				.Any(type =>
-					type.IsPublic
+					(type.IsPublic || !requirePublic)
 					&& type.Kind != APITypeKind.Interface
 					&& type.Interfaces.Contains(port.FullName, StringComparer.Ordinal)
 				);
@@ -32,12 +40,13 @@ public sealed partial class ArchitecturePolicyEvaluator
 				continue;
 
 			var responsibility = Policy.Classify(project);
+			var visibility = requirePublic ? "public implementation" : "implementation";
 
 			violations.Add(
 				new ArchitectureViolation(
 					ArchitectureRules.PortImplementation,
 					project,
-					$"'{port.FullName}' is a port in {responsibility?.Name ?? project} with no public implementation in the repository. "
+					$"'{port.FullName}' is a port in {responsibility?.Name ?? project} with no {visibility} in the repository. "
 						+ "Implement it in an adapter, or remove it: an unimplemented contract is a boundary nobody crossed."
 				)
 			);
@@ -64,9 +73,14 @@ public sealed partial class ArchitecturePolicyEvaluator
 					.Select(type =>
 						(
 							Type: type,
+							// A prefix, as the setting is named and documented. Contains() also matched
+							// a type whose *namespace* merely contained the prefix part-way through,
+							// so 'System.Data' flagged 'Contoso.System.DataPoint'.
+							//
+							// Matched inside generic arguments too: IReadOnlyList<DbContext> exposes
+							// the technology just as plainly as returning it directly.
 							Prefix: Policy.PortRules.ForbiddenTypePrefixes.FirstOrDefault(prefix =>
-								!string.IsNullOrEmpty(prefix)
-								&& type.Contains(prefix, StringComparison.OrdinalIgnoreCase)
+								!string.IsNullOrEmpty(prefix) && NamesPrefix(type, prefix)
 							)
 						)
 					)
@@ -104,6 +118,20 @@ public sealed partial class ArchitecturePolicyEvaluator
 			ArchitectureRules.PortPurity => PortPurity(),
 			_ => [],
 		};
+
+	/// <summary>Reports whether a rendered type name, or any of its generic arguments, starts with a prefix.</summary>
+	/// <param name="typeName">The rendered type name, such as <c>IReadOnlyList&lt;Ns.Order&gt;</c>.</param>
+	/// <param name="prefix">The forbidden namespace prefix.</param>
+	/// <returns><see langword="true"/> when the prefix begins the type or one of its arguments.</returns>
+	/// <remarks>
+	/// A signature renders as a single string, so the generic arguments are split out and each part
+	/// tested on its own. The alternative - a substring search over the whole string - matches a
+	/// prefix appearing anywhere, including part-way through an unrelated namespace.
+	/// </remarks>
+	static bool NamesPrefix(string typeName, string prefix) =>
+		typeName
+			.Split(['<', '>', ',', '[', ']'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+			.Any(part => part.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
 
 	/// <summary>Enumerates the interfaces the policy treats as ports.</summary>
 	/// <returns>The declaring project and the interface.</returns>

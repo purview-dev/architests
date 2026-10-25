@@ -30,6 +30,15 @@
 			explicitly, and the TUnit packages supply the ones the base class needs.
 		-->
 		<AutoIncludeUsings>false</AutoIncludeUsings>
+
+		<!--
+			Binary compatibility against the last release, checked at pack time. The repository's own
+			apiSurface rule compares the declared surface as text; package validation compares what a
+			compiled consumer can still bind to, which is a different question. Bump the baseline in
+			the same commit as a deliberate breaking change, and say so in the release notes.
+		-->
+		<EnablePackageValidation>true</EnablePackageValidation>
+		<PackageValidationBaselineVersion>1.2.0</PackageValidationBaselineVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

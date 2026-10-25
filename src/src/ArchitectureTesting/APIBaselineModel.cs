@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Purview.Architecture.Testing;
 
 /// <summary>A project's public API in a baseline.</summary>
@@ -36,4 +38,35 @@ public sealed record APIBaselineMember(
 	string TypeName,
 	bool IsStatic,
 	IReadOnlyList<string> Parameters
-);
+)
+{
+	/// <summary>The number of generic parameters the member declares. Zero for a non-generic member.</summary>
+	/// <remarks>
+	/// Written only when it is non-zero, so a baseline captured before arity was recorded stays byte
+	/// for byte identical.
+	/// </remarks>
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+	public int GenericArity { get; init; }
+
+	/// <summary>
+	/// The overload identity: everything that distinguishes a member from its siblings except the
+	/// declared type.
+	/// </summary>
+	/// <remarks>
+	/// A member cannot be identified by name and parameters alone. <c>M&lt;T&gt;(X)</c> and
+	/// <c>M(X)</c> differ only in arity, and C# lets two members differ only in return type, so a key
+	/// built from name and parameters collides on real, legal API. Overload identity deliberately
+	/// stops short of the declared type: two members that match here and differ only in their type
+	/// are reported as one changed member rather than as a removal and an addition.
+	/// </remarks>
+	[JsonIgnore]
+	public string OverloadKey => $"{Kind}|{Name}|{GenericArity}|{string.Join(",", Parameters)}";
+
+	/// <summary>The full identity, including the declared type.</summary>
+	/// <remarks>
+	/// Two members sharing this are indistinguishable. Real metadata cannot produce that, so a
+	/// duplicate means the baseline file has been corrupted or hand-edited.
+	/// </remarks>
+	[JsonIgnore]
+	public string Signature => $"{OverloadKey}|{TypeName}";
+}

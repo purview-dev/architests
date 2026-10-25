@@ -22,6 +22,7 @@ derived test class. The repository also applies that package to itself.
 | `src/src/ArchitectureTesting` | The package: `ArchitecturePolicy`, `ProjectGraph`, `AssemblyGraph`, `APISurface`, `ArchitecturePolicyEvaluator`, `PurviewArchitectureTests` |
 | `src/src/Architecture.CLI` | The `architests` dotnet tool: `validate`, `waivers list`; assembly and command are `architests`, package ID is `Purview.Architecture.Testing.Cli` |
 | `src/tests/ArchitectureTesting.UnitTests` | Rule tests against in-memory and fixture graphs, and the reader tests |
+| `src/tests/ArchitectureTesting.AcceptanceTests` | BDTest Given/When/Then scenarios: each rule's happy and unhappy path, as prose |
 | `src/tests/ArchitectureTesting.CLI.UnitTests` | The tool's parser, exit codes, `validate` and `waivers list` |
 | `src/tests/Repository.UnitTests` | Repository-level assertions: the skill self-tests, the rule/docs drift test, and the package applied to this repository |
 | `src/samples/ArchitectureSample` | A small, fully working repository that adopts the package |
@@ -106,6 +107,18 @@ shape, and say so in `README.md` and the skill.
   `await Assert.That(actual).IsEqualTo(expected);`.
 - Use `--treenode-filter` for test filtering, not `dotnet test --filter`.
 - Follow the existing AAA + `Subject_Scenario_Expectation` naming.
+- **Every rule and policy setting carries a happy *and* an unhappy path test.** A "reports nothing"
+  test alone cannot distinguish a rule that correctly ignored something from a rule that stopped
+  working, so each exclusion is paired with a scenario proving the same rule still catches the real
+  violation beside it.
+- Those pairs live in `src/tests/ArchitectureTesting.AcceptanceTests`, written with
+  [BDTest](https://github.com/thomhurst/BDTest) (`BDTest.TUnit`) so they read as prose. A scenario is
+  a `TUnitBDTestBase<PolicyContext>` class carrying `[Story]`, with `[ScenarioText]` on each `[Test]`
+  and `[StepText]` on each step. Steps are split into `RepositorySteps` (given), `RuleSteps` (when)
+  and `OutcomeSteps` (then); the project's `TestType` is **Acceptance**, per its `*.AcceptanceTests`
+  name. BDTest runs on the same Microsoft.Testing.Platform runner as the rest of the suite.
+- The acceptance project keeps its own `Fixture`, deliberately separate from the unit tests' builder:
+  the two suites are meant to be able to fail independently.
 - **All tests must pass identically on Windows, Linux, and macOS.** Never hardcode platform-specific
   paths; build paths with `Path.Combine` and friends, and keep fixtures under the temp directory.
 

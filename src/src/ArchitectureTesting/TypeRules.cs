@@ -44,11 +44,11 @@ public sealed class TypeRules
 	[JsonPropertyName("requireReadOnlyCollections")]
 	public bool RequireReadOnlyCollections { get; init; } = true;
 
-	/// <summary>Attributes every governed public type must carry, by namespace-qualified type name.</summary>
+	/// <summary>Attributes no governed public type may carry, by namespace-qualified type name.</summary>
 	[JsonPropertyName("forbiddenAttributes")]
 	public IReadOnlyList<string> ForbiddenAttributes { get; init; } = [];
 
-	/// <summary>Attributes no governed public type may carry, by namespace-qualified type name.</summary>
+	/// <summary>Attributes every governed public type must carry, by namespace-qualified type name.</summary>
 	[JsonPropertyName("requiredAttributes")]
 	public IReadOnlyList<string> RequiredAttributes { get; init; } = [];
 
