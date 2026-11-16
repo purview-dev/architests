@@ -56,6 +56,8 @@ public sealed class ArchitectureTests : PurviewArchitectureTests;
 > the class compiles, the run is green and nothing is enforced. TUnit's analyzer reports `TUnit0030`
 > — treat it as an error.
 
+**Documentation:** [Architests documentation](https://purview.dev/docs/architests/)
+
 ## Install
 
 ```text
